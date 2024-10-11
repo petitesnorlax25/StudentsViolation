@@ -232,7 +232,7 @@ nav {
 										<input type="hidden" name="status" value="compliant">
 									</form>
                                     
-                     <form th:action="@{/studentsViolation/getHomepage}" method="get" id="homepage-form">
+                     <form th:action="@{/studentsViolation/homepage}" method="get" id="homepage-form">
                         <a href="#" onclick="event.preventDefault(); document.getElementById('homepage-form').submit();" class="nav-item active-nav nav-font bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold hover:from-blue-650 hover:to-blue-850 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 rounded-lg shadow-md py-3 px-6">Homepage</a>
                     </form>
 
@@ -292,75 +292,65 @@ nav {
                 </div>
             </div>
   
-             <div class="main-content mt-8" id="mainContainer">
-                <!-- Check if there are violations -->
-                <div th:if="${#lists.isEmpty(session.currentUserViolations)}" class="no-violations text-center text-xl text-gray-600 py-8">
-					No Violations currently.
-                </div>
+            <div class="main-content mt-8" id="mainContainer">
+    <!-- Check if there are violations -->
+    <div th:if="${#lists.isEmpty(session.currentUserViolations)}" class="no-violations text-center text-xl text-gray-600 py-8">
+        No Violations currently.
+    </div>
 
-                <!-- Display table if there are violations -->
-                <div th:if="${!#lists.isEmpty(session.currentUserViolations)}" class="overflow-x-auto">
-                    <table class="table table-striped">
-                        <thead class="table-header">
-                            <tr>
-                                <th>Academic Year</th>
-                                <th>Violation</th>
-                                <th>Type</th>
-                                <th>Color</th>
-                                <th>Status</th>
-                                <th>Violation Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="viotion : ${session.currentUserViolations}" class="table-row">
-                                <td class="table-cell" th:text="${viotion.academicYear}"></td>
-                                <td class="table-cell" th:text="${viotion.violationType}"></td>
-                                <td class="table-cell">
-                                    <span th:if="${viotion.strike == 1}" class="text-green-600 font-medium">1st Offense</span>
-                                    <span th:if="${viotion.strike == 2}" class="text-yellow-600 font-medium">2nd Offense</span>
-                                    <span th:if="${viotion.strike == 3}" class="text-orange-600 font-medium">3rd Offense</span>
-                                    <span th:if="${viotion.strike == 4}" class="text-red-600 font-medium">4th Offense</span>
-                                    <span th:if="${viotion.strike == 5}" class="text-red-700 font-bold">Suspended</span>
-                                </td>
-                                <td class="table-cell">
-                                    <span th:if="${viotion.strike == 1}">
-                                        <i class="fa-solid fa-circle text-green-500"></i>
-                                    </span>
-                                    <span th:if="${viotion.strike == 2}">
-                                        <i class="fa-solid fa-circle text-yellow-500"></i>
-                                    </span>
-                                    <span th:if="${viotion.strike == 3}">
-                                        <i class="fa-solid fa-circle text-orange-500"></i>
-                                    </span>
-                                    <span th:if="${viotion.strike == 4}">
-                                        <i class="fa-solid fa-circle text-red-500"></i>
-                                    </span>
-                                    <span th:if="${viotion.strike == 5}">
-                                        <i class="fa-solid fa-x text-red-700"></i>
-                                    </span>
-                                </td>
-                                <td class="table-cell">
-                                    <span th:if="${viotion.status == 1}" class="text-green-600 font-medium">Compliant</span>
-                                    <span th:unless="${viotion.status == 1}" class="text-red-600 font-medium">Non-Compliant</span>
-                                </td>
-                                <td class="table-cell">
-                                    <span th:text="${viotion.violationDate}"></span>
-                                </td>
-								 <td class="table-cell" th:if="${viotion.status == 0}">
-								    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#officersModal"
-								        th:onclick="'getApprovedOfficers('+${viotion.id}+')'">
-								        View Officers
-								    </button>
-								</td>
-								<td th:if="${viotion.status == 1}" class="table-cell">
-                                    <i class="fa-solid fa-check-double" style="color: #34cd0a;"></i> Compliant
-                                </td>
+    <!-- Display table if there are violations -->
+    <div th:if="${!#lists.isEmpty(session.currentUserViolations)}" class="overflow-x-auto">
+        <table class="table table-striped">
+            <thead class="table-header">
+                <tr>
+                    <th>Academic Year</th>
+                    <th>Violation</th>
+                    <th>Type</th>
+                    <th>Color</th>
+                    <th>Status</th>
+                    <th>Violation Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="viotion : ${session.currentUserViolations}" class="table-row">
+                    <td class="table-cell" th:text="${viotion.academicYear != null} ? ${viotion.academicYear} : 'N/A'"></td>
+                    <td class="table-cell" th:text="${viotion.violationType != null} ? ${viotion.violationType} : 'N/A'"></td>
+                    <td class="table-cell">
+                        <span th:if="${viotion.strike == 1}"> <i class="fa-solid fa-circle text-green-500"></i> <span class="text-green-600 font-medium">1st Offense</span></span>
+                        <span th:if="${viotion.strike == 2}"> <i class="fa-solid fa-circle text-yellow-500"></i> <span class="text-yellow-600 font-medium">2nd Offense</span></span>
+                        <span th:if="${viotion.strike == 3}"> <i class="fa-solid fa-circle text-orange-500"></i> <span class="text-orange-600 font-medium">3rd Offense</span></span>
+                        <span th:if="${viotion.strike == 4}"> <i class="fa-solid fa-circle text-red-500"></i> <span class="text-red-600 font-medium">4th Offense</span></span>
+                        <span th:if="${viotion.strike == 5}"> <i class="fa-solid fa-x text-red-700"></i> <span class="text-red-700 font-bold">Suspended</span></span>
+                    </td>
+                    <td class="table-cell">
+                        <span th:if="${viotion.strike == 1}"> <i class="fa-solid fa-circle text-green-500"></i> </span>
+                        <span th:if="${viotion.strike == 2}"> <i class="fa-solid fa-circle text-yellow-500"></i> </span>
+                        <span th:if="${viotion.strike == 3}"> <i class="fa-solid fa-circle text-orange-500"></i> </span>
+                        <span th:if="${viotion.strike == 4}"> <i class="fa-solid fa-circle text-red-500"></i> </span>
+                        <span th:if="${viotion.strike == 5}"> <i class="fa-solid fa-x text-red-700"></i> </span>
+                    </td>
+                    <td class="table-cell">
+                        <span th:if="${viotion.status == 1}" class="text-green-600 font-medium">Compliant</span>
+                        <span th:unless="${viotion.status == 1}" class="text-red-600 font-medium">Non-Compliant</span>
+                    </td>
+                    <td class="table-cell">
+                        <span th:text="${viotion.violationDate != null} ? ${viotion.violationDate} : 'N/A'"></span>
+                    </td>
+                    <td class="table-cell" th:if="${viotion.status == 0}">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#officersModal"
+                                th:onclick="'getApprovedOfficers('+${viotion.id}+')'">
+                            View Officers
+                        </button>
+                    </td>
+                    <td th:if="${viotion.status == 1}" class="table-cell">
+                        <i class="fa-solid fa-check-double" style="color: #34cd0a;"></i> Compliant
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
 <div class="modal fade" id="officersModal" tabindex="-1" aria-labelledby="officersModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content rounded-lg shadow-lg border border-gray-300">
@@ -369,31 +359,37 @@ nav {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-10 bg-gray-50">
-                <div class="officer-info mb-10">
+
+                <div class="officer-info mb-10" th:if="${session.departmentHead != null}">
                     <h2 class="text-2xl font-semibold mb-3 text-blue-600 text-center">Department Head</h2>
                     <img class="profile-pic w-32 h-32 rounded-full border-4 border-blue-600 mx-auto mb-4" 
                          th:src="@{${'/studentsViolation/display?id=' + session.departmentHead.id}}" 
                          alt="Department Head Profile Picture">
-                    <div id="deptHeadText" class="text-gray-800 text-xl font-medium text-center" th:text="${session.departmentHead.name}"></div>
+                    <div id="deptHeadText" class="text-gray-800 text-xl font-medium text-center" th:text="${session.departmentHead.name} != null ? session.departmentHead.name : 'N/A'"></div>
                     <div id="deptStatus" class="text-lg text-gray-500 text-center"></div>
                 </div>
 
-                <div class="officer-info mb-10">
+                <div class="officer-info mb-10" th:if="${session.disc != null}">
                     <h2 class="text-2xl font-semibold mb-3 text-blue-600 text-center">Disciplinary Officer</h2>
                     <img class="profile-pic w-32 h-32 rounded-full border-4 border-blue-600 mx-auto mb-4" 
                          th:src="@{${'/studentsViolation/display?id=' + session.disc.id}}" 
                          alt="Disciplinary Officer Profile Picture">
-                    <div id="discText" class="text-gray-800 text-xl font-medium text-center" th:text="${session.disc.name}"></div>
+                    <div id="discText" class="text-gray-800 text-xl font-medium text-center" th:text="${session.disc.name} != null ? session.disc.name : 'N/A'"></div>
                     <div id="discStatus" class="text-lg text-gray-500 text-center"></div>
                 </div>
 
-                <div class="officer-info mb-10">
+                <div class="officer-info mb-10" th:if="${session.guide != null}">
                     <h2 class="text-2xl font-semibold mb-3 text-blue-600 text-center">Guidance Counselor</h2>
                     <img class="profile-pic w-32 h-32 rounded-full border-4 border-blue-600 mx-auto mb-4" 
                          th:src="@{${'/studentsViolation/display?id=' + session.guide.id}}" 
                          alt="Guidance Counselor Profile Picture">
-                    <div id="guideText" class="text-gray-800 text-xl font-medium text-center" th:text="${session.guide.name}"></div>
+                    <div id="guideText" class="text-gray-800 text-xl font-medium text-center" th:text="${session.guide.name} != null ? session.guide.name : 'N/A'"></div>
                     <div id="guideStatus" class="text-lg text-gray-500 text-center"></div>
+                </div>
+
+                <!-- Optional: Display a message if any officer is missing -->
+                <div th:if="${session.departmentHead == null && session.disc == null && session.guide == null}" class="text-red-600 text-lg text-center">
+                    No officers available.
                 </div>
             </div>
             <div class="modal-footer bg-gray-200 rounded-b-lg">
@@ -402,6 +398,7 @@ nav {
         </div>
     </div>
 </div>
+
 
 
 

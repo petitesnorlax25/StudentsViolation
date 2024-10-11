@@ -24,7 +24,7 @@ public class StudentsController {
 
 	@Autowired()
 	private ViolationService violationService;
-	@GetMapping("/getHomepage")
+	@GetMapping("/homepage")
 	public String getLogin(HttpSession session, Model model) {
 		String userCode = (String) session.getAttribute("usercode");
 		List<ViolationRecords> getViolationByUsercode = violationService.getViolationByUsercode(userCode);

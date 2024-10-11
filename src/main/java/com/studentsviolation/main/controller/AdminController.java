@@ -125,7 +125,7 @@ public class AdminController {
 	}
 	@GetMapping("/studentsLogin")
 	public String showStudentsLogin(Model model, HttpSession session) {
-		return "users/students/studentsLogin";
+		return "students/studentsLogin";
 		
 	}
 	@GetMapping("/dashboard")
@@ -206,6 +206,9 @@ public class AdminController {
 		String url = apiLoginUrl + "?txtUserName=" + username + "&txtPassword=" + password;
 	    Students students = new Students();
 	    StudentsData studentData = apiAuthenticationService.authenticate(url);
+	    if(studentData==null){
+	    	return "redirect:/studentsViolation/studentsLogin?errorMessage=invalid username or password";
+	    }
 	    String firstname = studentData.getFirst_name();	 
         String middlename = studentData.getMiddle_name();	
         String lastname = studentData.getLast_name();
@@ -213,50 +216,6 @@ public class AdminController {
 	    UserEntity getDisc = adminRepository.findByUserType("disciplinaryofficer");
 	    UserEntity getGuide = adminRepository.findByUserType("guidancecounselor");
 	    Students getStudentFromDB = studentsService.getStudentByFirstnameAndMiddlenameAndLastname(firstname, middlename, lastname);
-	    if (getStudentFromDB==null&&studentData!=null) {
-	    	String description = studentData.getProgram_description();
-        	String[] words = description.split(" ");
-
-        	// Join the first three words
-        	String firstThreeWords = String.join(" ", words[0], words[1], words[2]);
-
-        	System.out.println(firstThreeWords);
-        	if (firstThreeWords.equals("BACHELOR OF ARTS")) {
-        		students.setProgramCode("OA");
-        	}else if (firstThreeWords.equals("BACHELOR OF ELEMENTARY")|| firstThreeWords.equals("BACHELOR OF PHYSICAL")||firstThreeWords.equals("BACHELOR OF SECONDARY")) {
-        		students.setProgramCode("EDUC");
-        	}else {
-        		students.setProgramCode(studentData.getProgram_code());
-        	}
-            students.setFirstname(studentData.getFirst_name());
-            students.setMiddlename(studentData.getMiddle_name());
-            students.setLastname(studentData.getLast_name());
-            students.setYear(studentData.getYear_level());
-            students.setPassword(password);
-            students.setUsername(studentData.getUser_code());
-            students.setSection(studentData.getSection());
-            students.setCourseYear(studentData.getYear_level() + studentData.getSection());
-            students.setProgram_description(studentData.getProgram_description());
-            students.setViolationsCount(0);
-            // Logging the student data
-            
-            try {
-                studentsService.createStudent(students);
-            } catch (Exception e) {
-                System.err.println("Error creating student: " + e.getMessage());
-                e.printStackTrace();
-            }
-            return "redirect:/studentsViolation/getHomepage";
-	    }else if(getStudentFromDB==null&&studentData==null){
-	    	 return "redirect:/studentsViolation?errorMessage=invalid username or password";
-	    }else {
-	    	Students getStudent = studentsService.getStudentByUsernameAndPassword(username, password);
-	    	getStudent = (getStudent != null) ? getStudent : new Students(); 
-	    	if (!getStudent.getUsername().equals("username")&&!getStudent.getPassword().equals("password")) {
-	    		
-	    		return "redirect:/studentsViolation?errorMessage=invalid username or password";
-	    	}
-	    }
 	    System.out.println("Creating student with data: " + students);
         session.setAttribute("isLogged", "true");
         System.out.println("afgassasdhgfdtg: " + (studentData.getFirst_name() != null ? studentData.getFirst_name() : "N/A"));
@@ -302,7 +261,50 @@ public class AdminController {
         System.out.println("rowssL "+countRow);
         session.setAttribute("violationsTotal", countRow);
         session.setAttribute("violationsCurrentTotal", countRow1);
-        return "redirect:/studentsViolation/getHomepage";
+	    if (getStudentFromDB==null&&studentData!=null) {
+	    	String description = studentData.getProgram_description();
+        	String[] words = description.split(" ");
+
+        	// Join the first three words
+        	String firstThreeWords = String.join(" ", words[0], words[1], words[2]);
+
+        	System.out.println(firstThreeWords);
+        	if (firstThreeWords.equals("BACHELOR OF ARTS")) {
+        		students.setProgramCode("OA");
+        	}else if (firstThreeWords.equals("BACHELOR OF ELEMENTARY")|| firstThreeWords.equals("BACHELOR OF PHYSICAL")||firstThreeWords.equals("BACHELOR OF SECONDARY")) {
+        		students.setProgramCode("EDUC");
+        	}else {
+        		students.setProgramCode(studentData.getProgram_code());
+        	}
+            students.setFirstname(studentData.getFirst_name());
+            students.setMiddlename(studentData.getMiddle_name());
+            students.setLastname(studentData.getLast_name());
+            students.setYear(studentData.getYear_level());
+            students.setPassword(password);
+            students.setUsername(studentData.getUser_code());
+            students.setSection(studentData.getSection());
+            students.setCourseYear(studentData.getYear_level() + studentData.getSection());
+            students.setProgram_description(studentData.getProgram_description());
+            students.setViolationsCount(0);
+            // Logging the student data
+            
+            try {
+                studentsService.createStudent(students);
+            } catch (Exception e) {
+                System.err.println("Error creating student: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return "redirect:/studentsViolation/homepage";
+	    }else {
+	    	Students getStudent = studentsService.getStudentByUsernameAndPassword(username, password);
+	    	getStudent = (getStudent != null) ? getStudent : new Students(); 
+	    	if (!getStudent.getUsername().equals(username)||!getStudent.getPassword().equals(password)) {
+	    		
+	    		return "redirect:/studentsViolation/studentsLogin?errorMessage=invalid username or password";
+	    	}
+	    }
+	    return "redirect:/studentsViolation/homepage";
+
 	}
 	@PostMapping("/login")
 	public String loginMethod(@ModelAttribute UserEntity admin, HttpSession session, RedirectAttributes redirectAttributes, Model model) {
