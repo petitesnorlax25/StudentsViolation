@@ -34,7 +34,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smartgate.main.entity.Notifications;
 import com.studentsviolation.main.DateTime;
 import com.studentsviolation.main.ViolationRecordDTO;
 import com.studentsviolation.main.entity.AcademicYear;
