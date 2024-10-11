@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="h-full bg-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violators</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/5097e0fb9c.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Include SweetAlert2 -->
+    <link rel="icon" type="image/gif" href="imgOP/gif001.gif">
+    <style>
+        .nav-item { cursor: pointer; }
+        .nav-link { transition: all 0.3s ease; }
+        .nav-link:hover { transform: translateY(-2px); }
+        .logo-image {
+            height: 70px;
+            width: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .logo-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        .nav-font {
+            font-size: 1rem;
+        }
+        a {
+            text-decoration: none;
+        }
+        .department-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .department-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .but {
+            cursor: pointer;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-content a:hover {
+            background-color: #e9e9e9;
+        }
+        .sub-nav {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .sub-nav a {
+            color: #4b5563;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .sub-nav a:hover {
+            background-color: #e2e8f0;
+            color: #1f2937;
+        }
+        .text-logo {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 1rem;
+        }
+        /* New styles for improved navigation */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        .nav-items {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .nav-item {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .logout-btn {
+            background-color: #4a5568;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background-color: #2d3748;
+        }
+        /* Glowing Effect for Notification Badges */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px; /* Badge size */
+    height: 20px; /* Badge size */
+    background-color: #e63946; /* Change color as needed */
+    color: white;
+    font-size: 12px; /* Text size */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    animation: glow 1.5s infinite alternate;
+}
+
+
+
+/* Additional Styles */
+.nav-font {
+    font-size: 16px; /* Font size */
+}
+nav {
+            background: linear-gradient(135deg, #3B82F6 25%, #EC4899 100%);
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
+        }
+
+
+    </style>
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+
+
+  <nav>
+    <div class="nav-container">
+        <div class="flex items-center">
+            
+              <div class="flex items-center text-white space-x-4">
+                <img class="profile-pic w-16 h-16 rounded-full border-2 border-white" th:src="@{${'/studentsViolation/display?id=' + session.currentUser.id}}" alt="Profile Picture">  
+                <div>
+                    <div class="profile-name text-xl font-medium" th:text="${session.currentUser.name}"></div>
+                    <div class="profile-usertype text-md" th:text="${session.currentUser.userType}"></div>
+                </div>
+            </div>
+            <img class="logo-image" src="/bcc.jpg" alt="Your Company">
+            <div class="text-logo text-xl font-semibold ml-4">Students Violation</div>
+        </div>
+        <div class="nav-items">
+           <form th:action="@{/studentsViolation/dashboard}" method="get" id="dashboard-form">
+    <a href="#" onclick="event.preventDefault(); document.getElementById('dashboard-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Dashboard</a>
+</form>
+
+
+	
+            <form th:action="@{/studentsViolation/violators}" method="get" id="records-form" class="relative">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('records-form').submit();" class="nav-item active-nav nav-font bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold hover:from-blue-650 hover:to-blue-850 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 rounded-lg shadow-md py-3 px-6">
+                    Violators
+                    <!-- Notification Badges -->
+                    <span id="isNotif" class="notification-badge glow" style="display: none;">
+                        <p id="isNotifNum"></p>
+                    </span>
+                    <span id="crimNotif" class="notification-badge glow" style="display: none;">
+                        <p id="crimNotifNum"></p>
+                    </span>
+                    <span id="oaNotif" class="notification-badge glow" style="display: none;">
+                        <p id="oaNotifNum"></p>
+                    </span>
+                    <span id="educNotif" class="notification-badge glow" style="display: none;">
+                        <p id="educNotifNum"></p>
+                    </span>
+                    <span id="discNotif" class="notification-badge glow" style="display: none;">
+                        <p id="discNotifNum"></p>
+                    </span>
+                    <span id="guideNotif" class="notification-badge glow" style="display: none;">
+                        <p id="guideNotifNum"></p>
+                    </span>
+                </a>
+            </form>
+            
+			<div th:if="${session.currentUser.userType == 'departmenthead'}">
+	            <form th:action="@{/studentsViolation/students}" method="get" id="students-form">
+	                <a href="#" onclick="event.preventDefault(); document.getElementById('students-form').submit();" class="nav-item text-white font-semibold nav-font">Students</a>
+	            </form>
+			</div>
+            <form th:action="@{/studentsViolation/userAccount}" method="get" id="userAcc-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('userAcc-form').submit();" class="nav-item text-white font-semibold nav-font">User Account</a>
+            </form>
+
+            <form th:action="@{/studentsViolation/logout}" method="post" id="logout-form">
+                <button type="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+
+        <header class="bg-white shadow">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900">Violators</h1>
+            </div>
+        </header>
+    <main class="container mx-auto mt-8 px-4">
+	
+
+   
+
+    <div class="w-full max-w-6xl mx-auto mt-10"> <!-- Increased max width -->
+        <!-- Tab Buttons -->
+        <div class="flex border-b border-gray-200 mb-6">
+            <button
+                class="tab-button w-full py-4 text-gray-600 hover:text-indigo-600 focus:outline-none focus:border-indigo-500 transition duration-300 border-b-2 border-transparent font-semibold text-lg"
+                id="tab-1"
+            >
+                Pending Approval
+            </button>
+            <button
+                class="tab-button w-full py-4 text-gray-600 hover:text-indigo-600 focus:outline-none focus:border-indigo-500 transition duration-300 border-b-2 border-transparent font-semibold text-lg"
+                id="tab-2"
+            >
+                Approved
+            </button>
+        </div>
+         <input
+        type="text"
+        id="searchInput"
+        placeholder="Search users..."
+        class="form-control mb-4 p-3 border rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    />
+	 <div class="flex flex-wrap space-x-4 mb-4">
+    <div>
+        <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
+        <input type="date" id="startDate" class="mt-1 p-2 border border-gray-300 rounded-md">
+    </div>
+    <div>
+        <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
+        <input type="date" id="endDate" class="mt-1 p-2 border border-gray-300 rounded-md">
+    </div>
+    <div class="self-end">
+        <button onclick="filterTable()" class="p-2 bg-blue-500 text-white rounded">Filter</button>
+    </div>
+</div>
+
+<!-- Preset Buttons -->
+<div class="space-x-4 mb-4">
+    <button onclick="filterByPreset('day')" class="p-2 bg-gray-200 rounded">Today</button>
+    <button onclick="filterByPreset('week')" class="p-2 bg-gray-200 rounded">This Week</button>
+    <button onclick="filterByPreset('month')" class="p-2 bg-gray-200 rounded">This Month</button>
+    <button onclick="filterByPreset('year')" class="p-2 bg-gray-200 rounded">This Year</button>
+    <button onclick="clearFilter()" class="p-2 bg-red-500 text-white rounded">Clear</button>
+</div>
+        <!-- Tab Content -->
+        <div class="tab-content-container">
+            <!-- Content 1 -->
+            <div id="content1" class="tab-content">
+                <div th:if="${#lists.isEmpty(session.violators)}" class="text-center">
+                    <p class="text-gray-500 font-medium">No records found.</p>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(session.violators)}">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                            <thead class="bg-gray-200 text-gray-700">
+                                <tr th:if="${session.currentUser.userType == 'departmenthead'}">
+                                    <th class="px-6 py-4">#</th>
+                                    <th class="px-6 py-4">Usercode</th>
+                                    <th class="px-6 py-4">Name</th>
+                                    <th class="px-6 py-4">Course</th>
+                                    <th class="px-6 py-4">Year & Section</th>                                   
+                                    <th class="px-6 py-4">Violation</th>
+                                    <th class="px-6 py-4">Sanction</th>
+                                    <th class="px-6 py-4">Type</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4">Date</th>
+                                    <th class="px-6 py-4">Approval</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recordTable">
+                                <tr th:each="records : ${session.violators}" class="hover:bg-gray-100 transition duration-300">
+                                    <td th:text="${records.id}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.students.username}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.students.firstname+' '+records.students.lastname}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.students.programCode}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.students.year+'-'+records.students.section}" class="px-6 py-4 border-b"></td>
+                                    
+                                    <td th:text="${records.violationType}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.sanction}" class="px-6 py-4 border-b"></td>
+                                    <td>
+                                        <span th:if="${records.strike == 1}" class="text-green-600">1st offense<i class="fa-solid fa-circle" style="color: #08e222;"></i></span>
+                                        <span th:if="${records.strike == 2}" class="text-yellow-500">2nd offense<i class="fa-solid fa-circle" style="color: #F6FB7A;"></i></span>
+                                        <span th:if="${records.strike == 3}" class="text-orange-500">3rd offense<i class="fa-solid fa-circle" style="color: #FB773C;"></i></span>
+                                        <span th:if="${records.strike == 4}" class="text-red-600">4th offense<i class="fa-solid fa-circle" style="color: #E4003A;"></i></span>
+                                        <span th:if="${records.strike == 5}" class="text-red-800">5th offense<i class="fa-solid fa-x" style="color: #ec0909;"></i></span>
+                                    </td>
+                                    <td th:text="${records.status == 1 ? 'Compliant' : 'Non-Compliant'}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${#dates.format(records.violationDate, 'dd/MM/yyyy, hh:mm:ss a')}" class="date-column px-6 py-4 border-b"></td>
+                                    <td >
+                                        <form th:action="@{/studentsViolation/approve}" method="post">
+											<input type="hidden" th:value="${session.currentUser.id}" name="userId">
+                                            <input type="hidden" th:value="${records.id}" name="id">
+                                            <button type="submit" class="apv-button text-green-500 hover:text-green-700">
+                                                <i class="fa-solid fa-check"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                        
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content 2 -->
+            <div id="content2" class="tab-content hidden">
+                <div th:if="${#lists.isEmpty(session.compViolators)}" class="text-center">
+                    <p class="text-gray-500 font-medium">No records found.</p>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(session.compViolators)}">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                            <thead class="bg-gray-200 text-gray-700">
+                                <tr th:if="${session.currentUser.userType == 'departmenthead'}">
+                                    <th class="px-6 py-4">#</th>
+                                    <th class="px-6 py-4">Usercode</th>
+                                    <th class="px-6 py-4">Name</th>
+                                    <th class="px-6 py-4">Course</th>
+                                    <th class="px-6 py-4">Year & Section</th>
+                                    <th class="px-6 py-4">Violation</th>
+                                    <th class="px-6 py-4">Sanction</th>
+                                    <th class="px-6 py-4">Type</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4">Date</th>
+                              
+                                </tr>
+                            </thead>
+                            <tbody id="recordTable">
+                                <tr th:each="records : ${session.compViolators}" class="hover:bg-gray-100 transition duration-300">
+                                    <td th:text="${records.id}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.students.username}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.students.firstname+' '+records.students.lastname}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.students.programCode}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.students.year+'-'+records.students.section}" class="px-6 py-4 border-b"></td>
+                                    
+                                    <td th:text="${records.violationType}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${records.sanction}" class="px-6 py-4 border-b"></td>
+                                    <td>
+                                        <span th:if="${records.strike == 1}" class="text-green-600">1st offense<i class="fa-solid fa-circle" style="color: #08e222;"></i></span>
+                                        <span th:if="${records.strike == 2}" class="text-yellow-500">2nd offense<i class="fa-solid fa-circle" style="color: #F6FB7A;"></i></span>
+                                        <span th:if="${records.strike == 3}" class="text-orange-500">3rd offense<i class="fa-solid fa-circle" style="color: #FB773C;"></i></span>
+                                        <span th:if="${records.strike == 4}" class="text-red-600">4th offense<i class="fa-solid fa-circle" style="color: #E4003A;"></i></span>
+                                        <span th:if="${records.strike == 5}" class="text-red-800">5th offense<i class="fa-solid fa-circle" style="color: #ec0909;"></i></span>
+                                    </td>
+                                    <td th:text="${records.status == 1 ? 'Compliant' : 'Non-Compliant'}" class="px-6 py-4 border-b"></td>
+                                    <td th:text="${#dates.format(records.violationDate, 'dd/MM/yyyy, hh:mm:ss a')}" class="date-column px-6 py-4 border-b"></td>
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   <script th:inline="javascript">
+    /*<![CDATA[*/
+    function filterTable() {
+    var startDateInput = document.getElementById("startDate").value;
+    var endDateInput = document.getElementById("endDate").value;
+
+    if (!startDateInput || !endDateInput) {
+        document.querySelectorAll("#recordTable tr").forEach(function(row) {
+            row.style.display = "";
+        });
+        return;
+    }
+
+    var startDate = new Date(startDateInput);
+    var endDate = new Date(endDateInput);
+    endDate.setHours(23, 59, 59, 999);
+
+    var rows = document.querySelectorAll("#recordTable tr");
+
+    rows.forEach(function(row) {
+        var dateCell = row.querySelector('.date-column');
+        var dateText = dateCell.textContent.trim();
+
+        // Extract only the date part (e.g., "29/09/2024")
+        var datePart = dateText.split(",")[0].trim(); // Get the part before the comma
+
+        // Convert the extracted date to a Date object
+        var [day, month, year] = datePart.split("/").map(Number);
+        var recordDate = new Date(year, month - 1, day); // month is 0-indexed
+
+        // Compare dates
+        var matchesFilter = (recordDate >= startDate && recordDate <= endDate);
+
+        row.style.display = matchesFilter ? "" : "none";
+    });
+}
+
+function filterByPreset(preset) {
+    var today = new Date();
+    var startDate, endDate;
+
+    if (preset === "month") {
+        startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        endDate.setHours(23, 59, 59, 999);
+    } else if (preset === "year") {
+        startDate = new Date(today.getFullYear(), 0, 1);
+        endDate = new Date(today.getFullYear(), 11, 31);
+        endDate.setHours(23, 59, 59, 999);
+    } else if (preset === "day") {
+        startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0);
+        endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+    } else if (preset === "week") {
+        startDate = new Date(today);
+        startDate.setDate(today.getDate() - 7);
+        startDate.setHours(0, 0, 0, 0);
+        endDate = new Date(today);
+        endDate.setHours(23, 59, 59, 999);
+    }
+
+    document.getElementById("startDate").valueAsDate = startDate;
+    document.getElementById("endDate").valueAsDate = endDate;
+
+    filterTable();
+}
+   function clearFilter() {
+        document.getElementById("startDate").value = "";
+        document.getElementById("endDate").value = "";
+        document.querySelectorAll("#recordTable tr").forEach(function(row) {
+            row.style.display = "";
+        });
+    }
+   document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.apv-button').forEach(function(approveBtn) {
+        approveBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the form from submitting immediately
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You are about to approve this record!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, approve it!',
+                cancelButtonText: 'No, cancel!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.closest('form').submit(); // Submit the form only if confirmed
+                }
+            });
+        });
+    });
+});
+
+    var unauthorizedAccess = /*[[${param.unauthorizedAccess}]]*/ null;
+    var errorMessage = /*[[${param.errorMessage}]]*/ null;
+
+    if (unauthorizedAccess) {
+        Swal.fire({
+            title: 'Unauthorized Access',
+            text: unauthorizedAccess,
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3D5A80'
+        });
+        var url = new URL(window.location.href);
+        url.searchParams.delete('unauthorizedAccess');
+        window.history.replaceState(null, null, url.pathname + url.search);
+    }
+
+    if (errorMessage) {
+        Swal.fire({
+            title: 'Error',
+            text: errorMessage,
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3D5A80'
+        });
+        var url = new URL(window.location.href);
+        url.searchParams.delete('errorMessage');
+        window.history.replaceState(null, null, url.pathname + url.search);
+    }
+        // JavaScript for tab switching
+   
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                tabButtons.forEach(btn => btn.classList.remove('border-indigo-500', 'text-indigo-600'));
+                // Hide all tab contents
+                tabContents.forEach(content => content.classList.add('hidden'));
+                // Show the corresponding tab content
+                const contentId = button.id === 'tab-1' ? 'content1' : 'content2';
+                document.getElementById(contentId).classList.remove('hidden');
+                // Add active class to the clicked button
+                button.classList.add('border-indigo-500', 'text-indigo-600');
+            });
+        });
+    });
+
+			
+            function previewImage(event) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const output = document.getElementById('profile-pic-preview');
+                    output.src = reader.result;
+                    output.style.display = 'block';
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            }
+
+    
+
+    function formSubmit(formType) {
+        if (formType === 1) {
+            document.getElementById('logout-form').submit();
+        } else if (formType === 2) {
+            document.getElementById('users-form').submit();
+        } else if (formType === 3) {
+            document.getElementById('records-form').submit();
+        } else if (formType === 4) {
+            document.getElementById('acadYear-form').submit();
+        } else if (formType === 5) {
+            document.getElementById('dashboard-form').submit();
+        } else if (formType === 6) {
+            document.getElementById('reports-form').submit();
+        } else if (formType === 7) {
+            document.getElementById('userAcc-form').submit();    
+        }
+    }
+
+    $(document).ready(function() {
+        $('#menu').click(function() {
+            $(this).toggleClass('fa-times');
+            $('header').toggleClass('toggle');
+
+            $(window).on('scroll load', function() {
+                $('#menu').removeClass('fa-times');
+                $('header').removeClass('toggle');  
+            });     
+        });
+
+        // Function to filter table rows based on search input
+        $('#searchInput').on('input', function() {
+            var query = $(this).val().toLowerCase();
+            $('tbody tr').each(function() {
+                var rowText = $(this).text().toLowerCase();
+                $(this).toggle(rowText.includes(query));
+            });
+        });
+         // Call the function immediately and then every 5 seconds
+    getNotification(); // Initial call
+    setInterval(getNotification, 5000); 
+    });
+
+    function checkUsername() {
+        var username = document.getElementById("username").value;
+        var usernameError = document.getElementById("usernameError");
+        var regButton = document.getElementById("submitButton");
+        fetch('/studentsViolation/check-username?username=' + username)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    usernameError.textContent = "Username is already taken.";
+                    usernameChecker = 0;
+                    regButton.disabled = true;
+                } else {
+                    usernameError.textContent = "";
+                    usernameChecker = 1;
+                    regButton.disabled = false;
+                }
+                usernameAndPasswordChecker();
+            });
+    }
+
+    // Fetch session variables, defaulting to null if not defined
+    var userType = /*[[${session.currentUser.userType != null ? session.currentUser.userType : 'null'}]]*/ null;
+    var programHeadType = /*[[${session.currentUser.programHeadType != null ? session.currentUser.programHeadType : 'null'}]]*/ null;
+
+    function getNotification() {
+        console.log("userType: " + userType);
+        console.log("programHeadType: " + programHeadType);
+        
+        // Get notification elements by their ID
+        var educNotif = document.getElementById('educNotif');
+        var isNotif = document.getElementById('isNotif');
+        var oaNotif = document.getElementById('oaNotif');
+        var crimNotif = document.getElementById('crimNotif');
+        var discNotif = document.getElementById('discNotif');
+        var guideNotif = document.getElementById('guideNotif');
+        var oaNotifNum = document.getElementById('oaNotifNum');
+        var crimNotifNum = document.getElementById('crimNotifNum');
+        var discNotifNum = document.getElementById('discNotifNum');
+        var guideNotifNum = document.getElementById('guideNotifNum');
+
+        // Perform fetch request to get notifications
+        fetch('/studentsViolation/getNotification')
+            .then(response => response.json())
+            .then(data => {
+                // Check for department head notifications
+                if (userType === "departmenthead") {
+                    // Check for IS notifications if the user is a department head for IS
+                    if (programHeadType === "IS" && data.isNotif > 0) {
+                        isNotif.style.display = "block";
+                        isNotifNum.textContent = data.isNotif;
+                        isNotifNum.style.display = "block";
+                    } else {
+                        isNotif.style.display = "none"; // Hide if no notifications
+                        isNotifNum.style.display = "none";
+                    }
+
+                    // Check for OA notifications if the user is a department head for OA
+                    if (programHeadType === "OA" && data.oaNotif > 0) {
+                        oaNotif.style.display = "block";
+                        oaNotifNum.textContent = data.oaNotif;
+                        oaNotifNum.style.display = "block";
+                    } else {
+                        oaNotif.style.display = "none"; // Hide if no notifications
+                        oaNotifNum.style.display = "none";
+                    }
+
+                    // Check for educational notifications
+                    if (programHeadType === "EDUC" && data.educNotif > 0) {
+                        educNotif.style.display = "block";
+                        educNotifNum.textContent = data.educNotif;
+                        educNotifNum.style.display = "block";
+                       
+                    } else {
+                        educNotif.style.display = "none"; // Hide if no notifications
+                       	educNotifNum.style.display = "none";
+                    }
+
+                    // Check for criminal notifications
+                    if (programHeadType === "CRIM" && data.crinNotif > 0) {
+                        crimNotif.style.display = "block";
+                        crimNotifNum.textContent = data.crinNotif;
+                        crimNotifNum.style.display = "block";
+                    } else {
+                        crimNotif.style.display = "none"; // Hide if no notifications
+                        crimNotifNum.style.display = "none";
+                    }
+                    
+                }else if (userType === "disciplinaryofficer" ) {
+					if (data.discNotif>0) {
+						discNotif.style.display = "block";
+						discNotifNum.textContent = data.discNotif;
+						discNotifNum.style.display = "block";
+					}else{
+						discNotif.style.display = "none";
+						discNotifNum.style.display = "none";
+					}
+				}else if (userType === "guidancecounselor" ) {
+					if (data.guideNotif>0) {
+						guideNotif.style.display = "block";
+						guideNotifNum.textContent = data.guideNotif;
+						guideNotifNum.style.display = "block";
+					}else{
+						guideNotif.style.display = "none";
+						guideNotifNum.style.display = "none";
+					}
+					
+				}
+            })
+            .catch(error => {
+                console.error('Error fetching notifications:', error);
+            });
+    }
+    /*]]>*/
+</script>
+
+</body>
+</html>
+
+

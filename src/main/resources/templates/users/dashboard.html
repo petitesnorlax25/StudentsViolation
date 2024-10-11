@@ -1,119 +1,968 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" class="h-full bg-gray-100">
 <head>
-<style>
-.col-sm {
-	border-style: solid;
-	background-color: skyblue;
-	margin: 20px;
-}
-#students-icon, #violations-icon {
-	margin-left: 50px;
-}
-</style>
-    <title>Login</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/5097e0fb9c.js" crossorigin="anonymous"></script>
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">STUDENTS VIOLATION</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Dashboard<span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-		<form th:action="@{/studentsViolation/users}" method="get" id="users-form">
-			<input type="hidden" name="status" value="enabled">
-        	<a class="nav-link" href="#" onclick="formSubmit(2)">Users</a>
-        </form>
+    <link rel="icon" type="image/gif" href="imgOP/gif001.gif">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <style>
+        .nav-item { cursor: pointer; }
+        .nav-link { transition: all 0.3s ease; }
+        .nav-link:hover { transform: translateY(-2px); }
+        .logo-image {
+            height: 70px;
+            width: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .logo-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        .nav-font {
+            font-size: 1rem;
+        }
+        a {
+            text-decoration: none;
+        }
+        .active-nav {
+            background-color: #4a5568; /* Darker background for active item */
+            color: white; /* White text for active item */
+            border-radius: 0.375rem; /* Rounded corners */
+        }
+        .department-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .department-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .but {
+            cursor: pointer;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-content a:hover {
+            background-color: #e9e9e9;
+        }
+        .sub-nav {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .sub-nav a {
+            color: #4b5563;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .sub-nav a:hover {
+            background-color: #e2e8f0;
+            color: #1f2937;
+        }
+        .text-logo {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 1rem;
+        }
+        /* New styles for improved navigation */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        .nav-items {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .nav-item {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .logout-btn {
+            background-color: #4a5568;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background-color: #2d3748;
+        }
+        /* Print-specific styles */
+        @media print {
+            body {
+                font-size: 12pt;
+                line-height: 1.5;
+            }
+            .container {
+                width: 100%;
+                max-width: none;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+        /* Improved main content styles */
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        .card-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+        }
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        .card-icon-red {
+            color: #f10404;
+        }
+        #main-content {
+            display: none;
+        }
+         .chart-container {
+            width: 50%;
+            height: 300px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px; /* Badge size */
+    height: 20px; /* Badge size */
+    background-color: #e63946; /* Change color as needed */
+    color: white;
+    font-size: 12px; /* Text size */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    animation: glow 1.5s infinite alternate;
+}
+nav {
+            background: linear-gradient(135deg, #3B82F6 25%, #EC4899 100%);
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
+        }
 
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">User Account</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Records</a>
-      </li>
-      <li class="nav-item">
-      	<form th:action="@{/studentsViolation/logout}" method="post" id="logout-form">
-        	<a class="nav-link" href="#" onclick="formSubmit(1)">Logout</a>
-        </form>
-      </li>
-    </ul>
-  </div>
-  </nav>
-    <div class="container">
-		  <div class="titlePage">
-          		<h1>DASHBOARD</h1>
-          </div>
-          <div class="container">
-			  <div class="row">
-			    <div class="col-sm">
-			      <h3>Academic Year/Semester</h3>
-			      <h3>2024-2025 1ST SEM</h3>
-			    </div>
-			    <div class="col-sm">
-			      <h3>Total Students <i class="fa-regular fa-user" id="students-icon"></i></h3>
-			      <h3>10</h3>
-			    </div>
-			    <div class="col-sm">
-			      <h3>Total Violations <i class="fa-solid fa-exclamation" id="violations-icon"></i></h3>
-			      <h3>10</h3>
-			    </div>
-			  </div>
+    </style>
+</head>
+<body class="h-full">
+	
+    <div class="min-h-full">
+       
+        <div th:if="${session.currentUser.userType == 'admin' || session.currentUser.userType == 'staff'}">
+       <nav>
+    <div class="nav-container">
+        <div class="flex items-center">
+            
+              <div class="flex items-center text-white space-x-4">
+                <img class="profile-pic w-16 h-16 rounded-full border-2 border-white" th:src="@{${'/studentsViolation/display?id=' + session.currentUser.id}}" alt="Profile Picture">  
+                <div>
+                    <div class="profile-name text-xl font-medium" th:text="${session.currentUser.name}"></div>
+                    <div class="profile-usertype text-md" th:text="${session.currentUser.userType}"></div>
+                </div>
+            </div>
+            <img class="logo-image" src="/bcc.jpg" alt="Your Company">
+            <div class="text-logo text-xl font-semibold ml-4">Students Violation</div>
+        </div>
+        <div class="nav-items">
+            <form th:action="@{/studentsViolation/dashboard}" method="get" id="dashboard-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('dashboard-form').submit();" class="nav-item active-nav nav-font bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold hover:from-blue-650 hover:to-blue-850 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 rounded-lg shadow-md py-3 px-6">Dashboard</a>
+            </form>
+            <form th:if="${session.userType == 'admin'}" th:action="@{/studentsViolation/users}" method="get" id="users-form">
+                <input type="hidden" name="status" value="enabled">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('users-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Users</a>
+            </form>
+            <form th:unless="${session.userType == 'admin'}" th:action="@{/studentsViolation/studentEntry}" method="get" id="studentEntry-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('studentEntry-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Student Entry</a>
+            </form>
+            <form th:action="@{/studentsViolation/records}" method="get" id="records-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('records-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Records</a>
+            </form>
+            <form th:action="@{/studentsViolation/academicYear}" method="get" id="acadYear-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('acadYear-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Academic Year</a>
+            </form>
+            <div class="dropdown">
+                <a href="#" class="nav-item text-white font-semibold hover:text-white nav-font">Reports</a>
+                <div class="dropdown-content">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('crim-report-form').submit();">CRIM</a>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('is-report-form').submit();">IS</a>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('arts-report-form').submit();">ARTS</a>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('educ-report-form').submit();">EDUC</a>
+                </div>
+            </div>
+            <form th:action="@{/studentsViolation/getReports}" method="get" id="crim-report-form" style="display: none;">
+                <input type="hidden" name="department" value="CRIM">
+            </form>
+            <form th:action="@{/studentsViolation/getReports}" method="get" id="is-report-form" style="display: none;">
+                <input type="hidden" name="department" value="IS">
+            </form>
+            <form th:action="@{/studentsViolation/getReports}" method="get" id="arts-report-form" style="display: none;">
+                <input type="hidden" name="department" value="ARTS">
+            </form>
+            <form th:action="@{/studentsViolation/getReports}" method="get" id="educ-report-form" style="display: none;">
+                <input type="hidden" name="department" value="EDUC">
+            </form>
+            <form th:action="@{/studentsViolation/userAccount}" method="get" id="userAcc-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('userAcc-form').submit();" class="nav-item text-gray-300 hover:text-white nav-font">User Account</a>
+            </form>
+             <form th:action="@{/studentsViolation/logout}" method="post" id="logout-form">
+                <button type="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+        </div>
+        <div th:if="${session.currentUser.userType == 'departmenthead' || session.currentUser.userType == 'disciplinaryofficer' || session.currentUser.userType == 'guidancecounselor'}">
+  <nav>
+    <div class="nav-container">
+        <div class="flex items-center">
+            
+              <div class="flex items-center text-white space-x-4">
+                <img class="profile-pic w-16 h-16 rounded-full border-2 border-white" th:src="@{${'/studentsViolation/display?id=' + session.currentUser.id}}" alt="Profile Picture">  
+                <div>
+                    <div class="profile-name text-xl font-medium" th:text="${session.currentUser.name}"></div>
+                    <div class="profile-usertype text-md" th:text="${session.currentUser.userType}"></div>
+                </div>
+            </div>
+            <img class="logo-image" src="/bcc.jpg" alt="Your Company">
+            <div class="text-logo text-xl font-semibold ml-4">Students Violation</div>
+        </div>
+        <div class="nav-items">
+           <form th:action="@{/studentsViolation/dashboard}" method="get" id="dashboard-form">
+    <a href="#" onclick="event.preventDefault(); document.getElementById('dashboard-form').submit();" class="nav-item active-nav nav-font bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold hover:from-blue-650 hover:to-blue-850 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 rounded-lg shadow-md py-3 px-6">Dashboard</a>
+</form>
+
+
+	
+            <form th:action="@{/studentsViolation/violators}" method="get" id="records-form" class="relative">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('records-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">
+                    Violators
+                    <!-- Notification Badges -->
+                    <span id="isNotif" class="notification-badge glow" style="display: none;">
+                        <p id="isNotifNum"></p>
+                    </span>
+                    <span id="crimNotif" class="notification-badge glow" style="display: none;">
+                        <p id="crimNotifNum"></p>
+                    </span>
+                    <span id="oaNotif" class="notification-badge glow" style="display: none;">
+                        <p id="oaNotifNum"></p>
+                    </span>
+                    <span id="educNotif" class="notification-badge glow" style="display: none;">
+                        <p id="educNotifNum"></p>
+                    </span>
+                    <span id="discNotif" class="notification-badge glow" style="display: none;">
+                        <p id="discNotifNum"></p>
+                    </span>
+                    <span id="guideNotif" class="notification-badge glow" style="display: none;">
+                        <p id="guideNotifNum"></p>
+                    </span>
+                </a>
+            </form>
+            
+			<div th:if="${session.currentUser.userType == 'departmenthead'}">
+	            <form th:action="@{/studentsViolation/students}" method="get" id="students-form">
+	                <a href="#" onclick="event.preventDefault(); document.getElementById('students-form').submit();" class="nav-item text-white font-semibold nav-font">Students</a>
+	            </form>
 			</div>
+            <form th:action="@{/studentsViolation/userAccount}" method="get" id="userAcc-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('userAcc-form').submit();" class="nav-item text-white font-semibold nav-font">User Account</a>
+            </form>
+
+            <form th:action="@{/studentsViolation/logout}" method="post" id="logout-form">
+                <button type="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+        </div>
+        <header class="bg-white shadow">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900">DASHBOARD</h1>
+            </div>
+        </header>
+    
+    <!-- Metrics Section -->
+    <div class="bg-gray-100 py-4">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Total Students Card -->
+                <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+                    <div class="flex items-center justify-center mb-2">
+                        <i class="fa-solid fa-user card-icon text-2xl"></i>
+                    </div>
+                    <h3 class="card-title text-center text-lg font-semibold">Total Students</h3>
+                    <div th:if="${session.currentUser.userType == 'admin' || session.currentUser.userType == 'staff' || session.currentUser.userType == 'guidancecounselor' || session.currentUser.userType == 'disciplinaryofficer'}">
+                        <p class="card-text text-center mt-1 text-xl" th:text="${session.countStudents}">
+                            <i class="fa-regular fa-user ml-2"></i>
+                        </p>
+                    </div>
+                    <div th:if="${session.currentUser.userType == 'departmenthead'}">
+                        <div th:switch="${session.currentUser.programHeadType}">
+                            <div th:case="'ARTS'">
+                                <p class="card-text text-center mt-1 text-xl" th:text="${session.countARTSStudents}">
+									<div class="profile-name text-xl font-medium" th:text="${session.currentUser.programHeadType}"></div>
+                                    <i class="fa-regular fa-user ml-2"></i>
+                                </p>
+                            </div>
+                            <div th:case="'CRIM'">
+                                <p class="card-text text-center mt-1 text-xl" th:text="${session.countCRIMStudents}">
+                                    <i class="fa-regular fa-user ml-2"></i>
+                                </p>
+                            </div>
+                            <div th:case="'IS'">
+                                <p class="card-text text-center mt-1 text-xl" th:text="${session.countISStudents}">
+                                    <i class="fa-regular fa-user ml-2"></i>
+                                </p>
+                            </div>
+                            <div th:case="'EDUC'">
+                                <p class="card-text text-center mt-1 text-xl" th:text="${session.countEDUCStudents}">
+                                    <i class="fa-regular fa-user ml-2"></i>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Academic Year/Semester Card -->
+                <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+                    <div class="flex items-center justify-center mb-2">
+                        <i class="fa-sharp fa-solid fa-school card-icon text-2xl"></i>
+                    </div>
+                    <h3 class="card-title text-center text-lg font-semibold">Academic Year/Semester</h3>
+                    <p class="card-text text-center mt-1 text-xl" th:text="${session.currentAcad.yearFrom + '-' + session.currentAcad.yearTo + ' ' + session.currentAcad.semester + ' Sem'}"></p>
+                </div>
+                <!-- Total Violations Card -->
+                <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+                    <div class="flex items-center justify-center mb-2">
+                        <i class="fa-solid fa-flag card-icon card-icon-red text-2xl"></i>
+                    </div>
+                    <h3 class="card-title text-center text-lg font-semibold">Total Violations</h3>
+                    <div th:if="${session.currentUser.userType == 'admin' || session.currentUser.userType == 'staff' || session.currentUser.userType == 'guidancecounselor' || session.currentUser.userType == 'disciplinaryofficer'}">
+                        <p class="card-text text-center mt-1 text-xl" th:text="${session.countRecords}">
+                            <i class="fa-regular fa-user ml-2"></i>
+                        </p>
+                    </div>
+                    <div th:if="${session.currentUser.userType == 'departmenthead'}">
+                        <div th:switch="${session.currentUser.programHeadType}">
+                            <div th:case="'ARTS'">
+                                <p class="card-text text-center mt-1 text-xl" th:text="${session.countARTSRecords}">
+                                    <i class="fa-regular fa-user ml-2"></i>
+                                </p>
+                            </div>
+                            <div th:case="'CRIM'">
+                                <p class="card-text text-center mt-1 text-xl" th:text="${session.countCRIMRecords}">
+                                    <i class="fa-regular fa-user ml-2"></i>
+                                </p>
+                            </div>
+                            <div th:case="'IS'">
+                                <p class="card-text text-center mt-1 text-xl" th:text="${session.countISRecords}">
+                                    <i class="fa-regular fa-user ml-2"></i>
+                                </p>
+                            </div>
+                            <div th:case="'EDUC'">
+                                <p class="card-text text-center mt-1 text-xl" th:text="${session.countEDUCRecords}">
+                                    <i class="fa-regular fa-user ml-2"></i>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+       
+        <div id="main-content">
+            <main>
+               
+               <div class="container">
+        <div class="row">
+            <div id="container" class="chart-container"></div>
+            <div id="containerCount" class="chart-container">
+			</div>
+        </div>
+    </div>
+					
+				</div>
+            </main>
+        </div>
     </div>
 
-    
-    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
-    /*<![CDATA[*/
-    // Retrieve the alert message from the URL parameter
-    var unauthorizedAccess = /*[[${param.unauthorizedAccess}]]*/ null;
-    var errorMessage = /*[[${param.errorMessage}]]*/ null;
+		    var userType = /*[[${session.currentUser.userType != null ? session.currentUser.userType : 'null'}]]*/ null;
+    var programHeadType = /*[[${session.currentUser.programHeadType != null ? session.currentUser.programHeadType : 'null'}]]*/ null;
+        /*<![CDATA[*/
+        document.addEventListener("DOMContentLoaded", function () {
 
-    // Display the alert if a message is provided
-    if (unauthorizedAccess) {
-        Swal.fire({
-            title: 'Unauthorized Access',
-            text: unauthorizedAccess,
-            icon: 'error',
-            confirmButtonText: 'OK'
+                document.getElementById('main-content').style.display = 'block';
+
         });
-        // Clear the URL parameters
-        var url = new URL(window.location.href);
-        url.searchParams.delete('unauthorizedAccess');
-        window.history.replaceState(null, null, url.pathname + url.search);
+              // Fetch session variables, defaulting to null if not defined
+
+        function getNotification() {
+        console.log("userType: " + userType);
+        console.log("programHeadType: " + programHeadType);
+        
+        // Get notification elements by their ID
+        var educNotif = document.getElementById('educNotif');
+        var isNotif = document.getElementById('isNotif');
+        var oaNotif = document.getElementById('oaNotif');
+        var crimNotif = document.getElementById('crimNotif');
+        var discNotif = document.getElementById('discNotif');
+        var guideNotif = document.getElementById('guideNotif');
+        var oaNotifNum = document.getElementById('oaNotifNum');
+        var crimNotifNum = document.getElementById('crimNotifNum');
+        var discNotifNum = document.getElementById('discNotifNum');
+        var guideNotifNum = document.getElementById('guideNotifNum');
+
+        // Perform fetch request to get notifications
+        fetch('/studentsViolation/getNotification')
+            .then(response => response.json())
+            .then(data => {
+                // Check for department head notifications
+                if (userType === "departmenthead") {
+                    // Check for IS notifications if the user is a department head for IS
+                    if (programHeadType === "IS" && data.isNotif > 0) {
+                        isNotif.style.display = "block";
+                        isNotifNum.textContent = data.isNotif;
+                        isNotifNum.style.display = "block";
+                    } else {
+                        isNotif.style.display = "none"; // Hide if no notifications
+                        isNotifNum.style.display = "none";
+                    }
+
+                    // Check for OA notifications if the user is a department head for OA
+                    if (programHeadType === "OA" && data.oaNotif > 0) {
+                        oaNotif.style.display = "block";
+                        oaNotifNum.textContent = data.oaNotif;
+                        oaNotifNum.style.display = "block";
+                    } else {
+                        oaNotif.style.display = "none"; // Hide if no notifications
+                        oaNotifNum.style.display = "none";
+                    }
+
+                    // Check for educational notifications
+                    if (programHeadType === "EDUC" && data.educNotif > 0) {
+                        educNotif.style.display = "block";
+                        educNotifNum.textContent = data.educNotif;
+                        educNotifNum.style.display = "block";
+                       
+                    } else {
+                        educNotif.style.display = "none"; // Hide if no notifications
+                       	educNotifNum.style.display = "none";
+                    }
+
+                    // Check for criminal notifications
+                    if (programHeadType === "CRIM" && data.crinNotif > 0) {
+                        crimNotif.style.display = "block";
+                        crimNotifNum.textContent = data.crinNotif;
+                        crimNotifNum.style.display = "block";
+                    } else {
+                        crimNotif.style.display = "none"; // Hide if no notifications
+                        crimNotifNum.style.display = "none";
+                    }
+                    
+                }else if (userType === "disciplinaryofficer" ) {
+					if (data.discNotif>0) {
+						discNotif.style.display = "block";
+						discNotifNum.textContent = data.discNotif;
+						discNotifNum.style.display = "block";
+					}else{
+						discNotif.style.display = "none";
+						discNotifNum.style.display = "none";
+					}
+				}else if (userType === "guidancecounselor" ) {
+					if (data.guideNotif>0) {
+						guideNotif.style.display = "block";
+						guideNotifNum.textContent = data.guideNotif;
+						guideNotifNum.style.display = "block";
+					}else{
+						guideNotif.style.display = "none";
+						guideNotifNum.style.display = "none";
+					}
+					
+				}
+            })
+            .catch(error => {
+                console.error('Error fetching notifications:', error);
+            });
     }
-    if (errorMessage) {
-        Swal.fire({
-            title: 'Error',
-            text: errorMessage,
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-        // Clear the URL parameters
-        var url = new URL(window.location.href);
-        url.searchParams.delete('errorMessage');
-        window.history.replaceState(null, null, url.pathname + url.search);
+
+        var id = /*[[${session.currentUser.id}]]*/; 
+        function postProgram(program, modalId) {
+            console.log("awww" + program + id);
+            $.ajax({
+                type: 'POST',
+                url: '/studentsViolation/post-controller',
+                data: { program: program, id: id },
+                success: function(response) {
+                    console.log('Program selected:', program);
+                    var modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+                    modal.hide();
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+document.addEventListener('DOMContentLoaded', function () {
+	// Call the function immediately and then every 5 seconds
+        getNotification(); // Initial call
+        setInterval(getNotification, 5000); // Fetch every 5 seconds
+    // Fetch data for Program Code Violations
+if (userType === "departmenthead") {
+	fetch('/studentsViolation/programCodeViolations')
+	    .then(response => response.json())
+	    .then(results => {
+	        if (Array.isArray(results)) {
+	            // Extract categories and data
+	            const categories = results.map(result => result[0]); // Program codes
+	            const data = results.map(result => ({
+	                name: result[0],
+	                y: result[1],
+	                color: getColorForProgramCode(result[0]) // Set color based on program code
+	            }));
+	
+	            Highcharts.chart('container', {
+	                chart: {
+	                    type: 'column',
+	                    backgroundColor: '#f8f9fa',
+	                    style: {
+	                        fontFamily: 'Arial, sans-serif'
+	                    }
+	                },
+	                title: {
+	                    text: 'Total Violations by Year Level',
+	                    style: {
+	                        fontSize: '24px',
+	                        fontWeight: 'bold',
+	                        color: '#333'
+	                    }
+	                },
+	                xAxis: {
+	                    categories: categories,
+	                    title: {
+	                        text: 'Year Level',
+	                        style: {
+	                            color: '#666',
+	                            fontSize: '16px',
+	                            fontWeight: 'bold'
+	                        }
+	                    },
+	                    labels: {
+	                        style: {
+	                            color: '#666',
+	                            fontSize: '14px'
+	                        }
+	                    }
+	                },
+	                yAxis: {
+	                    title: {
+	                        text: 'Number of Violations',
+	                        style: {
+	                            color: '#666',
+	                            fontSize: '16px',
+	                            fontWeight: 'bold'
+	                        }
+	                    },
+	                    labels: {
+	                        style: {
+	                            color: '#666',
+	                            fontSize: '14px'
+	                        }
+	                    },
+	                    allowDecimals: false
+	                },
+	                series: [{
+	                    name: 'Violations',
+	                    data: data
+	                }],
+	                plotOptions: {
+	                    column: {
+	                        dataLabels: {
+	                            enabled: true,
+	                            color: '#333',
+	                            style: {
+	                                fontSize: '14px',
+	                                fontWeight: 'bold'
+	                            }
+	                        }
+	                    }
+	                },
+	                legend: {
+	                    enabled: false, // Disable the legend
+	                    itemStyle: {
+	                        fontSize: '14px',
+	                        fontWeight: 'normal'
+	                    }
+	                },
+	                credits: {
+	                    enabled: false
+	                },
+	                tooltip: {
+	                    formatter: function() {
+	                        return '<b>' + this.x + '</b><br/>' +
+	                               'Violations: ' + this.y;
+	                    }
+	                }
+	            });
+	        } else {
+	            console.error('Expected an array but received:', results);
+	        }
+	    })
+	    .catch(error => console.error('Error loading program code violations data:', error));
+	    }else{
+			fetch('/studentsViolation/programCodeViolations')
+	    .then(response => response.json())
+	    .then(results => {
+	        if (Array.isArray(results)) {
+	            // Extract categories and data
+	            const categories = results.map(result => result[0]); // Program codes
+	            const data = results.map(result => ({
+	                name: result[0],
+	                y: result[1],
+	                color: getColorForProgramCode(result[0]) // Set color based on program code
+	            }));
+	
+	            Highcharts.chart('container', {
+	                chart: {
+	                    type: 'column',
+	                    backgroundColor: '#f8f9fa',
+	                    style: {
+	                        fontFamily: 'Arial, sans-serif'
+	                    }
+	                },
+	                title: {
+	                    text: 'Total Violations by Program Code',
+	                    style: {
+	                        fontSize: '24px',
+	                        fontWeight: 'bold',
+	                        color: '#333'
+	                    }
+	                },
+	                xAxis: {
+	                    categories: categories,
+	                    title: {
+	                        text: 'Program Code',
+	                        style: {
+	                            color: '#666',
+	                            fontSize: '16px',
+	                            fontWeight: 'bold'
+	                        }
+	                    },
+	                    labels: {
+	                        style: {
+	                            color: '#666',
+	                            fontSize: '14px'
+	                        }
+	                    }
+	                },
+	                yAxis: {
+	                    title: {
+	                        text: 'Number of Violations',
+	                        style: {
+	                            color: '#666',
+	                            fontSize: '16px',
+	                            fontWeight: 'bold'
+	                        }
+	                    },
+	                    labels: {
+	                        style: {
+	                            color: '#666',
+	                            fontSize: '14px'
+	                        }
+	                    },
+	                    allowDecimals: false
+	                },
+	                series: [{
+	                    name: 'Violations',
+	                    data: data
+	                }],
+	                plotOptions: {
+	                    column: {
+	                        dataLabels: {
+	                            enabled: true,
+	                            color: '#333',
+	                            style: {
+	                                fontSize: '14px',
+	                                fontWeight: 'bold'
+	                            }
+	                        }
+	                    }
+	                },
+	                legend: {
+	                    enabled: false, // Disable the legend
+	                    itemStyle: {
+	                        fontSize: '14px',
+	                        fontWeight: 'normal'
+	                    }
+	                },
+	                credits: {
+	                    enabled: false
+	                },
+	                tooltip: {
+	                    formatter: function() {
+	                        return '<b>' + this.x + '</b><br/>' +
+	                               'Violations: ' + this.y;
+	                    }
+	                }
+	            });
+	        } else {
+	            console.error('Expected an array but received:', results);
+	        }
+	    })
+	    .catch(error => console.error('Error loading program code violations data:', error));
+		}
+
+// Function to get color based on program code
+function getColorForProgramCode(programCode) {
+    switch (programCode) {
+        case 'CRIM':
+            return 'red';
+        case 'EDUC':
+            return 'blue';
+        case 'IS':
+            return 'green';
+        case 'OA':
+            return 'yellow';
+        default:
+            return '#ccc'; // Default color for unknown program codes
     }
-    function formSubmit(formType) {
-    	if (formType === 1) {
-    		document.getElementById('logout-form').submit();
-    	} else if (formType === 2) {
-    		document.getElementById('users-form').submit();
-    	}
-    	
-    	
-    	
-    }
-    /*]]>*/
+}
+
+
+    fetch('/studentsViolation/violationsCount')
+    .then(response => response.json())
+    .then(violationsCount => {
+        console.log('Received violationsCount data:', violationsCount); // Inspect the data
+
+        if (Array.isArray(violationsCount) && violationsCount.length > 0) {
+            const categories = violationsCount.map(item => item.violationName); // Violation names
+            const counts = violationsCount.map(item => item.count); // Violation counts
+
+            console.log("Categories:", categories); // Inspect categories
+            console.log("Counts:", counts); // Inspect counts
+
+            if (counts.length > 0) {
+                // Render the Highcharts graph
+                Highcharts.chart('containerCount', {
+                    chart: {
+                        type: 'column',
+                        backgroundColor: '#f8f9fa',
+                        style: {
+                            fontFamily: 'Arial, sans-serif'
+                        }
+                    },
+                    title: {
+                        text: 'Top Violations Type',
+                        style: {
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            color: '#333'
+                        }
+                    },
+                    xAxis: {
+                        categories: categories, // Use violation names for x-axis labels
+                        title: {
+                            text: 'Violation Type',
+                            style: {
+                                color: '#666',
+                                fontSize: '16px',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labels: {
+                            style: {
+                                color: '#666',
+                                fontSize: '14px'
+                            }
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Number of Violations',
+                            style: {
+                                color: '#666',
+                                fontSize: '16px',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labels: {
+                            style: {
+                                color: '#666',
+                                fontSize: '14px'
+                            }
+                        },
+                        allowDecimals: false
+                    },
+                    series: [{
+                        name: 'Violations',
+                        data: counts.map((count, index) => ({
+                            y: count,
+                            color: Highcharts.getOptions().colors[index] // Different colors for each column
+                        })),
+                        showInLegend: false // Disable column legend
+                    }],
+                    plotOptions: {
+                        column: {
+                            dataLabels: {
+                                enabled: true,
+                                color: '#333',
+                                style: {
+                                    fontSize: '14px',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        series: {
+                            cursor: 'pointer',
+                            point: {
+                                events: {
+                                    click: function() {
+                                        alert('Violation: ' + this.category + '\nCount: ' + this.y);
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return '<b>' + this.x + '</b><br/>' +
+                                   'Violations: ' + this.y;
+                        }
+                    }
+                });
+            } else {
+                console.error('Counts array is empty.');
+                document.getElementById('containerCount').innerHTML = 
+                    `<div style="text-align: center; margin: 20px;">
+                        <p>No data available to display.</p>
+                    </div>`;
+            }
+        } else {
+            console.error('Expected an array but received:', violationsCount);
+            document.getElementById('containerCount').innerHTML = 
+                `<div style="text-align: center; margin: 20px;">
+                    <p>No data available to display.</p>
+                </div>`;
+        }
+    })
+    .catch(error => console.error('Error loading violations count data:', error));
+
+});
+
+// Call the function to load and display data on page load
+document.addEventListener('DOMContentLoaded', loadViolationsData);
+        var unauthorizedAccess = /*[[${param.unauthorizedAccess}]]*/ null;
+        var errorMessage = /*[[${param.errorMessage}]]*/ null;
+
+        // Display the alert if a message is provided
+        if (unauthorizedAccess) {
+            Swal.fire({
+                title: 'Unauthorized Access',
+                text: unauthorizedAccess,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            // Clear the URL parameters
+            var url = new URL(window.location.href);
+            url.searchParams.delete('unauthorizedAccess');
+            window.history.replaceState(null, null, url.pathname + url.search);
+        }
+        if (errorMessage) {
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            // Clear the URL parameters
+            var url = new URL(window.location.href);
+            url.searchParams.delete('errorMessage');
+            window.history.replaceState(null, null, url.pathname + url.search);
+        }
+   
+    
+        /*]]>*/
     </script>
-
 </body>
 </html>

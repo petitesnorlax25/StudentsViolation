@@ -5,6 +5,15 @@
     <title>Users</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/gif" href="imgOP/gif001.gif">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" /> -->
+    <link rel="stylesheet" href="/admin_addstaff.css">
+
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
         body {
             margin: 20px;
@@ -116,36 +125,80 @@
     </script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">STUDENTS VIOLATION</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Dashboard<span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-		<form th:action="@{/studentsViolation/users}" method="get" id="users-form">
-        	<a class="nav-link" href="#" onclick="formSubmit(2)">Users</a>
-        </form>
+<header>
 
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">User Account</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Records</a>
-      </li>
-      <li class="nav-item">
-      	<form th:action="@{/studentsViolation/logout}" method="post" id="logout-form">
-        	<a class="nav-link" href="#" onclick="formSubmit(1)">Logout</a>
+        <div class="user">
+            <img src="/bcc.jpg" alt="">
+            <h3 style="letter-spacing: 4px; font-size: 1.5rem;">ADMINISTRATOR</h3>
+        </div>
+        <!-- <span class="menutext">menu</span> -->
+
+        <nav class="navbar">
+            <ul>
+         
+                <li >
+                    <i class="fa-solid fa-table-cells" id="active"></i>
+                    <form th:action="@{/studentsViolation/dashboard}" method="get" id="dashboard-form">
+			            <a class="nav-link" href="#" onclick="formSubmit(5)">DASHBOARD</a>
+			        </form>
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-users"></i>
+                    <form th:action="@{/studentsViolation/users}" method="get" id="users-form">
+			            <input type="hidden" name="status" value="disabled">
+			            <a class="nav-link" href="#" onclick="formSubmit(2)">USERS</a>
+			        </form>
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-book"></i>
+                    <form th:action="@{/studentsViolation/records}" method="get" id="records-form">
+			        	<a class="nav-link" href="#" onclick="formSubmit(3)">RECORDS</a>
+			        </form>
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <form th:action="@{/studentsViolation/academicYear}" method="get" id="acadYear-form">
+			        	<a class="nav-link" href="#" onclick="formSubmit(4)">ACADEMIC YEAR</a>
+			        </form>
+                </li> 
+                <li>
+                    <i class="fa-solid fa-file-circle-check"></i>
+                    <form th:action="@{/studentsViolation/reports}" method="get" id="reports-form">
+			        	<a class="nav-link" href="#" onclick="formSubmit(6)">REPORTS</a>
+			        </form>
+                </li>
+                <li>
+
+                    <i class="fa-solid fa-user"></i>
+                     <form th:action="@{/studentsViolation/userAccount}" method="get" id="userAcc-form">
+			        	<a class="nav-link" href="#" onclick="formSubmit(7)">USER ACCOUNT</a>
+			        </form>
+                </li>
+               
+
+                <div class="div">
+                  <span></span>
+                </div>
+
+                
+                <li>  
+                    <i class="fa-solid fa-door-open"></i>
+        <form th:action="@{/studentsViolation/logout}" method="post" id="logout-form">
+        	<a class="nav-link" href="#" onclick="formSubmit(1)">LOGOUT</a>
         </form>
-      </li>
-    </ul>
-  </div>
-  </nav>
+                </li>
+
+
+            </ul>
+        
+        </nav>
+
+    </header>
+    <div id="menu" class="fas fa-bars"></div>
+ 
 
 <h1>List of Users</h1>
 
@@ -194,6 +247,42 @@
             </td>
         </tr>
     </tbody>
+    
 </table>
+<script>
+     function formSubmit(formType) {
+    	if (formType === 1) {
+    		document.getElementById('logout-form').submit();
+    	} else if (formType === 2) {
+    		document.getElementById('users-form').submit();
+    	} else if (formType === 3) {
+    		document.getElementById('records-form').submit();
+    	} else if (formType === 4) {
+    		document.getElementById('acadYear-form').submit();
+    	}else if (formType === 5) {
+    		document.getElementById('dashboard-form').submit();
+    	}else if (formType === 6) {
+    		document.getElementById('reports-form').submit();
+    	}else if (formType === 7) {
+    		document.getElementById('userAcc-form').submit();	
+    	}
+    	
+    	
+    	
+    }
+    
+        $(document).ready(function(){
+    $('#menu').click(function(){
+    $(this).toggleClass('fa-times');
+    $('header').toggleClass('toggle');
+    
+    $(window).on('scroll load',function(){
+    
+    $('#menu').removeClass('fa-times');
+    $('header').removeClass('toggle');  
+    });     
+    });
+});
+    </script>
 </body>
 </html>

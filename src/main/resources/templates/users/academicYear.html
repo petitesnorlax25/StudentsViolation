@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="h-full bg-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Year</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/5097e0fb9c.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Include SweetAlert2 -->
+    <link rel="icon" type="image/gif" href="imgOP/gif001.gif">
+  <style>
+        .nav-item { cursor: pointer; }
+        .nav-link { transition: all 0.3s ease; }
+        .nav-link:hover { transform: translateY(-2px); }
+        .logo-image {
+            height: 70px;
+            width: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .logo-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        .nav-font {
+            font-size: 1rem;
+        }
+        a {
+            text-decoration: none;
+        }
+        .department-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .department-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .but {
+            cursor: pointer;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-content a:hover {
+            background-color: #e9e9e9;
+        }
+        .sub-nav {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .sub-nav a {
+            color: #4b5563;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .sub-nav a:hover {
+            background-color: #e2e8f0;
+            color: #1f2937;
+        }
+        .text-logo {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 1rem;
+        }
+        /* New styles for improved navigation */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        .nav-items {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .nav-item {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .logout-btn {
+            background-color: #4a5568;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background-color: #2d3748;
+        }
+        nav {
+            background: linear-gradient(135deg, #3B82F6 25%, #EC4899 100%);
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
+        }
+
+    </style>
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+          <nav>
+    <div class="nav-container">
+        <div class="flex items-center">
+            
+              <div class="flex items-center text-white space-x-4">
+                <img class="profile-pic w-16 h-16 rounded-full border-2 border-white" th:src="@{${'/studentsViolation/display?id=' + session.currentUser.id}}" alt="Profile Picture">  
+                <div>
+                    <div class="profile-name text-xl font-medium" th:text="${session.currentUser.name}"></div>
+                    <div class="profile-usertype text-md" th:text="${session.currentUser.userType}"></div>
+                </div>
+            </div>
+            <img class="logo-image" src="/bcc.jpg" alt="Your Company">
+            <div class="text-logo text-xl font-semibold ml-4">Students Violation</div>
+        </div>
+        <div class="nav-items">
+            <form th:action="@{/studentsViolation/dashboard}" method="get" id="dashboard-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('dashboard-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Dashboard</a>
+            </form>
+            <form th:if="${session.userType == 'admin'}" th:action="@{/studentsViolation/users}" method="get" id="users-form">
+                <input type="hidden" name="status" value="enabled">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('users-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Users</a>
+            </form>
+            <form th:unless="${session.userType == 'admin'}" th:action="@{/studentsViolation/studentEntry}" method="get" id="studentEntry-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('studentEntry-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Student Entry</a>
+            </form>
+            <form th:action="@{/studentsViolation/records}" method="get" id="records-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('records-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Records</a>
+            </form>
+            <form th:action="@{/studentsViolation/academicYear}" method="get" id="acadYear-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('acadYear-form').submit();" class="nav-item active-nav nav-font bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold hover:from-blue-650 hover:to-blue-850 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 rounded-lg shadow-md py-3 px-6">Academic Year</a>
+            </form>
+            <div class="dropdown">
+                <a href="#" class="nav-item text-white font-semibold hover:text-white nav-font">Reports</a>
+                <div class="dropdown-content">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('crim-report-form').submit();">CRIM</a>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('is-report-form').submit();">IS</a>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('arts-report-form').submit();">ARTS</a>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('educ-report-form').submit();">EDUC</a>
+                </div>
+            </div>
+            <form th:action="@{/studentsViolation/getReports}" method="get" id="crim-report-form" style="display: none;">
+                <input type="hidden" name="department" value="CRIM">
+            </form>
+            <form th:action="@{/studentsViolation/getReports}" method="get" id="is-report-form" style="display: none;">
+                <input type="hidden" name="department" value="IS">
+            </form>
+            <form th:action="@{/studentsViolation/getReports}" method="get" id="arts-report-form" style="display: none;">
+                <input type="hidden" name="department" value="ARTS">
+            </form>
+            <form th:action="@{/studentsViolation/getReports}" method="get" id="educ-report-form" style="display: none;">
+                <input type="hidden" name="department" value="EDUC">
+            </form>
+            <form th:action="@{/studentsViolation/userAccount}" method="get" id="userAcc-form">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('userAcc-form').submit();" class="nav-item text-gray-300 hover:text-white nav-font">User Account</a>
+            </form>
+             <form th:action="@{/studentsViolation/logout}" method="post" id="logout-form">
+                <button type="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+        <header class="bg-white shadow">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900">ACADEMIC YEAR</h1>
+            </div>
+        </header>
+        <main class="container mx-auto mt-8 px-4">
+         	  <div class="titlePage">
+     
+          </div>
+          <div class="container">
+              <!-- Button to trigger modal -->
+              <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#academicYearModal">
+                  Create New Academic Year
+              </button>
+
+              <!-- Modal -->
+              <div class="modal fade" id="academicYearModal" tabindex="-1" aria-labelledby="academicYearModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="academicYearModalLabel">Create Academic Year</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <form th:action="@{/studentsViolation/addAcadYear}" method="post">
+                                  <div class="mb-3">
+                                      <label for="yearDropdown" class="form-label">Year from</label>
+                                      <select id="yearDropdown" class="form-select" name="yearFrom">
+                                      </select>
+                                  </div>
+                                  <div class="mb-3">
+                                      <label for="yearToDropdown" class="form-label">Year to</label>
+                                      <select id="yearToDropdown" class="form-select" name="yearTo">
+                                      </select>
+                                  </div>
+                                  <div class="mb-3">
+                                      <label for="semDropdown" class="form-label">Semester:</label>
+                                      <select id="semDropdown" class="form-select" name="semester">
+                                          <option>1st</option>
+                                          <option>2nd</option>
+                                          <option>3rd</option>
+                                          <option>4th</option>
+                                      </select>
+                                  </div>
+                                  <input type="hidden" name="formType" value="1">
+                                  <button type="submit" class="btn btn-primary">Create</button>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Academic Year Table -->
+              <div class="card">
+                  <div class="card-header bg-primary text-white">
+                      <h5 class="mb-0">Academic Years</h5>
+                  </div>
+                  <div class="card-body">
+                      <div class="table-responsive">
+                          <table class="table table-hover">
+                              <thead>
+                                  <tr>
+                                      <th>#</th>
+                                      <th>A.Y Code</th>
+                                      <th>Year From</th>
+                                      <th>Year To</th>
+                                      <th>Semester</th>
+                                      <th>Status</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr th:each="acadYear : ${acadYearAll}">
+                                      <td th:text="${acadYear.id}"></td>
+                                      <td th:text="${acadYear.yearFrom+'-'+acadYear.yearTo+' '+acadYear.semester+' SEM'}"></td>
+                                      <td th:text="${acadYear.yearFrom}"></td>
+                                      <td th:text="${acadYear.yearTo}"></td>
+                                      <td th:text="${acadYear.semester}"></td>
+                                      <td>
+                                          <span th:if="${acadYear.status == 1}" class="badge bg-success">Selected</span>
+                                          <span th:if="${acadYear.status == 0}" class="badge bg-secondary">Not Selected</span>
+                                      </td>
+                                        <td>
+                                          <input type="checkbox" class="form-check-input academic-year-checkbox" 
+							                   th:checked="${acadYear.status == 1}" 
+							                   th:data-id="${acadYear.id}"
+							                   onclick="selectAcademicYear(this)">
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    // Retrieve the alert message from the URL parameter
+    var unauthorizedAccess = /*[[${param.unauthorizedAccess}]]*/ null;
+    var errorMessage = /*[[${param.errorMessage}]]*/ null;
+
+    // Display the alert if a message is provided
+    if (unauthorizedAccess) {
+        Swal.fire({
+            title: 'Unauthorized Access',
+            text: unauthorizedAccess,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        // Clear the URL parameters
+        var url = new URL(window.location.href);
+        url.searchParams.delete('unauthorizedAccess');
+        window.history.replaceState(null, null, url.pathname + url.search);
+    }
+    if (errorMessage) {
+        Swal.fire({
+            title: 'Error',
+            text: errorMessage,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        // Clear the URL parameters
+        var url = new URL(window.location.href);
+        url.searchParams.delete('errorMessage');
+        window.history.replaceState(null, null, url.pathname + url.search);
+    }
+    function formSubmit(formType) {
+    	if (formType === 1) {
+    		document.getElementById('logout-form').submit();
+    	} else if (formType === 2) {
+    		document.getElementById('users-form').submit();
+    	} else if (formType === 3) {
+    		document.getElementById('records-form').submit();
+    	} else if (formType === 4) {
+    		document.getElementById('acadYear-form').submit();
+    	}else if (formType === 5) {
+    		document.getElementById('dashboard-form').submit();
+    	}else if (formType === 6) {
+    		document.getElementById('reports-form').submit();
+    	}else if (formType === 7) {
+    		document.getElementById('userAcc-form').submit();	
+    	}else if (formType === 8) {
+    		document.getElementById('studentEntry-form').submit();	
+    	}
+    	
+    	
+    	
+    }
+    
+    
+
+        $(document).ready(function(){
+    $('#menu').click(function(){
+    $(this).toggleClass('fa-times');
+    $('header').toggleClass('toggle');
+    
+    $(window).on('scroll load',function(){
+    
+    $('#menu').removeClass('fa-times');
+    $('header').removeClass('toggle');  
+    });     
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+            const currentYear = new Date().getFullYear();
+            const futureYears = 10; // Number of years to include
+
+            const dropdown = document.getElementById('yearDropdown');
+       
+
+            for (let year = currentYear; year <= currentYear + futureYears; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                dropdown.appendChild(option);
+               
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentYear = new Date().getFullYear();
+            const futureYears = 10; // Number of years to include
+
+            const dropdown2 = document.getElementById('yearToDropdown');
+       
+
+            for (let year = currentYear; year <= currentYear + futureYears; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                dropdown2.appendChild(option);
+               
+            }
+        });
+
+
+  function selectAcademicYear(checkbox) {
+    const checkboxes = document.querySelectorAll('.academic-year-checkbox');
+    
+    // Uncheck all checkboxes
+    checkboxes.forEach(function(box) {
+        box.checked = false;
+    });
+    
+    // Check the current checkbox
+    checkbox.checked = true;
+
+    // Send the selected academic year ID to the backend
+    const selectedId = checkbox.getAttribute('data-id');
+console.log("Selected Academic Year ID: " + selectedId);  // Add this to check the ID
+updateSelectedAcademicYear(selectedId);
+
+}
+
+function updateSelectedAcademicYear(id) {
+    // Make an AJAX request to update the selected academic year on the server
+    $.ajax({
+        url: /*[[@{/studentsViolation/selectAcademicYear}]]*/, // URL is corrected
+        type: 'POST',
+        data: {id: id},
+        success: function(response) {
+            // Handle success (e.g., show a success message)
+            Swal.fire({
+                title: 'Success',
+                text: 'Academic year selected successfully!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        },
+        error: function(error) {
+            // Handle error (e.g., show an error message)
+            Swal.fire({
+                title: 'Error',
+                text: 'There was an issue selecting the academic year. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+    /*]]>*/
+    </script>
+</body>
+</html>
+
+

@@ -3,13 +3,18 @@ package com.studentsviolation.main.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.studentsviolation.main.entity.Admin;
+import com.studentsviolation.main.entity.UserEntity;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface AdminRepository extends JpaRepository<Admin, Long> {
+@Transactional
+public interface AdminRepository extends JpaRepository<UserEntity, Long> {
 
-	Admin findByUsername(String username);
-	Admin findByUsernameAndPasswordAndStatus(String username, String Password, int status);
-	List<Admin> findByPassword(String password);
-	List<Admin> findByStatus(int status);
+	UserEntity findByUsername(String username);
+	UserEntity findByUsernameAndPasswordAndStatus(String username, String Password, int status);
+	List<UserEntity> findByPassword(String password);
+	UserEntity findByProgramHeadType(String programHeadType);
+	UserEntity findByUserType(String userType);
+	List<UserEntity> findByStatus(int status);
+	
 }
 

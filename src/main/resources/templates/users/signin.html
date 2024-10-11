@@ -1,90 +1,151 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#EC4899',
+                        background: '#F9FAFB',
+                        text: '#1F2937',
+                        danger: '#EF4444'
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif']
+                    },
+                    boxShadow: {
+                        deep: '0 4px 10px rgba(0, 0, 0, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #3B82F6 25%, #EC4899 100%);
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
         }
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
-        .formDiv {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
-        .titlePage h1 {
-            margin: 0 0 20px;
-            font-size: 24px;
+
+        .input-field {
+            border-radius: 10px;
+            padding: 1rem;
+            background-color: #F3F4F6;
+            border: 1px solid #D1D5DB;
+            transition: all 0.3s ease;
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
         }
-        input[type="text"], input[type="password"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
+
+        .btn-gradient {
+            background: linear-gradient(to right, #1E40AF, #3B82F6);
+            color: white;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            background: linear-gradient(to right, #3B82F6, #1E40AF);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .background-pattern {
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            z-index: -1;
+            height: 300px;
+            width: 300px;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1), transparent);
+            border-radius: 50%;
+        }
+
+        .password-toggle:hover {
+            color: #3B82F6;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body>
-    <div class="container">
-        <div class="formDiv">
-            <form th:action="@{/studentsViolation/login}" method="post" enctype="multipart/form-data">
-                <div class="titlePage">
-                    <h1>Login</h1>
-                </div>
+<body class="relative bg-background min-h-screen flex items-center justify-center">
+    <div class="background-pattern"></div>
+    <div class="background-pattern" style="bottom: -50px; left: -50px; top: unset;"></div>
 
-                <label for="username">Username:</label>
-                <input type="text" name="username" id="username" value="">
-                
-                <label for="password">Password:</label>
-                <input type="password" name="password" id="password" value="">
-                <a href="/studentsViolation/register">Don't have an account? Register here</a>
-                <button type="submit" name="subButton">Login</button>
-            </form>
+    <div class="card w-full max-w-md">
+        <div class="text-center mb-8">
+            <img src="bcc.jpg" alt="Logo" class="w-24 h-24 mx-auto rounded-full border-4 border-secondary shadow-xl">
+        </div>
+
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-primary">Welcome to BCC</h1>
+            <p class="text-text mt-2">Students Violation System</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6" th:action="@{/studentsViolation/login}" method="post">
+            <div class="relative">
+                <input type="text" class="input-field w-full" placeholder="Username" name="username" required>
+                <span class="tooltip absolute right-4 top-1/2 transform -translate-y-1/2">
+                    <i class="fas fa-info-circle text-secondary"></i>
+                </span>
+            </div>
+            
+            <div class="relative">
+                <input type="password" name="password" class="input-field w-full pr-12" placeholder="Password" required>
+                <span class="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-text password-toggle" onclick="togglePasswordVisibility(this)">
+                    <i class="far fa-eye"></i>
+                </span>
+            </div>
+
+            <button type="submit" class="w-full btn-gradient">Login</button>
+        </form>
+
+        <div class="text-center mt-4">
+            <a href="#" class="text-sm text-secondary hover:underline">Forgot your password?</a>
         </div>
     </div>
-        <script th:inline="javascript">
+
+    <script th:inline="javascript">
     /*<![CDATA[*/
-    // Retrieve the alert message from the URL parameter
     var unauthorizedAccess = /*[[${param.unauthorizedAccess}]]*/ null;
     var errorMessage = /*[[${param.errorMessage}]]*/ null;
 
-    // Display the alert if a message is provided
     if (unauthorizedAccess) {
         Swal.fire({
             title: 'Unauthorized Access',
             text: unauthorizedAccess,
             icon: 'error',
-            confirmButtonText: 'OK'
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#1E40AF'
         });
-        // Clear the URL parameters
         var url = new URL(window.location.href);
         url.searchParams.delete('unauthorizedAccess');
         window.history.replaceState(null, null, url.pathname + url.search);
@@ -94,14 +155,29 @@
             title: 'Error',
             text: errorMessage,
             icon: 'error',
-            confirmButtonText: 'OK'
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#1E40AF'
         });
-        // Clear the URL parameters
         var url = new URL(window.location.href);
         url.searchParams.delete('errorMessage');
         window.history.replaceState(null, null, url.pathname + url.search);
     }
+
+    function togglePasswordVisibility(element) {
+        const passwordInput = element.previousElementSibling;
+        const icon = element.querySelector('i');
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
     /*]]>*/
     </script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </body>
 </html>

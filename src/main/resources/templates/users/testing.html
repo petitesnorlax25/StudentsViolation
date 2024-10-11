@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Program Code Violations</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+    <div id="container" style="width: 100%; height: 400px;"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var programCodeViolations = /*[[${programCodeViolations}]]*/ [];
+
+        var categories = [];
+        var data = [];
+
+        for (var i = 0; i < programCodeViolations.length; i++) {
+            categories.push(programCodeViolations[i][0]);
+            data.push(parseInt(programCodeViolations[i][1], 10));
+        }
+
+        Highcharts.chart('container', {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Total Violations by Program Code'
+            },
+            xAxis: {
+                categories: categories,
+                title: {
+                    text: 'Program Code'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Number of Violations'
+                }
+            },
+            series: [{
+                name: 'Violations',
+                data: data
+            }]
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

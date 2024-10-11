@@ -1,15 +1,20 @@
 package com.studentsviolation.main.entity;
 
 
+import java.sql.Blob;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
 import lombok.Data;
 @Data
 @Entity
-public class Admin {
+@Table(name="users")
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,11 +47,23 @@ public class Admin {
 	public int getStatus() {
 		return status;
 	}
+	public String getProgramHeadType() {
+		return programHeadType;
+	}
+	public void setProgramHeadType(String programHeadType) {
+		this.programHeadType = programHeadType;
+	}
 	public String getUserType() {
 		return userType;
 	}
 	public void setUserType(String userType) {
 		this.userType = userType;
+	}
+	public Blob getImage() {
+		return image;
+	}
+	public void setImage(Blob image) {
+		this.image = image;
 	}
 	public void setStatus(int status) {
 		this.status = status;
@@ -59,5 +76,10 @@ public class Admin {
     private String userType;
     @Column
     private int status;
+    @Column(name="program_head_type")
+    private String programHeadType;
+    @Lob
+    @Column
+    private Blob image;
 
 }
