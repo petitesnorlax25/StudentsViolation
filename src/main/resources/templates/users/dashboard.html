@@ -214,69 +214,118 @@ nav {
     <div class="min-h-full">
        
         <div th:if="${session.currentUser.userType == 'admin' || session.currentUser.userType == 'staff'}">
-       <nav>
+    <nav>
     <div class="nav-container">
-        <div class="flex items-center">
-            
-              <div class="flex items-center text-white space-x-4">
-                <img class="profile-pic w-16 h-16 rounded-full border-2 border-white" th:src="@{${'/studentsViolation/display?id=' + session.currentUser.id}}" alt="Profile Picture">  
-                <div>
-                    <div class="profile-name text-xl font-medium" th:text="${session.currentUser.name}"></div>
-                    <div class="profile-usertype text-md" th:text="${session.currentUser.userType}"></div>
+        <div class="flex items-center justify-between">
+            <!-- Left logo and title section -->
+            <div class="flex items-center justify-start ml-8">
+                <img class="logo-image" src="/bcc.jpg" alt="Your Company">
+                <div class="text-logo text-xl font-semibold ml-4">Students Violation</div>
+            </div>
+
+            <!-- Navigation items (Centered and aligned) -->
+            <div class="nav-items flex justify-center space-x-4 ml-8">
+                <form th:action="@{/studentsViolation/dashboard}" method="get" id="dashboard-form">
+                    <a thhref="#" onclick="event.preventDefault(); document.getElementById('dashboard-form').submit();" 
+                       class="nav-item active-nav nav-font bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold 
+                              hover:from-blue-650 hover:to-blue-850 focus:outline-none focus:ring-2 focus:ring-blue-400 
+                              transition-all duration-300 rounded-lg shadow-md py-2 px-6 text-base leading-tight">
+                        Dashboard
+                    </a>
+                </form>
+
+                <form th:if="${session.userType == 'admin'}" th:action="@{/studentsViolation/users}" method="get" id="users-form">
+                    <input type="hidden" name="status" value="enabled">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('users-form').submit();" 
+                       class="nav-item text-white font-semibold hover:text-white nav-font flex items-center justify-center 
+                              py-2 px-6 text-base leading-tight">
+                        Users
+                    </a>
+                </form>
+
+                <form th:unless="${session.userType == 'admin'}" th:action="@{/studentsViolation/studentEntry}" method="get" id="studentEntry-form">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('studentEntry-form').submit();" 
+                       class="nav-item text-white font-semibold hover:text-white nav-font flex items-center justify-center 
+                              py-2 px-6 text-base leading-tight">
+                        Student Entry
+                    </a>
+                </form>
+
+                <form th:action="@{/studentsViolation/records}" method="get" id="records-form">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('records-form').submit();" 
+                       class="nav-item text-white font-semibold hover:text-white nav-font flex items-center justify-center 
+                              py-2 px-6 text-base leading-tight">
+                        Records
+                    </a>
+                </form>
+
+                <!-- Adjusted 'Academic Year' with proper spacing and alignment -->
+                <form th:action="@{/studentsViolation/academicYear}" method="get" id="acadYear-form">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('acadYear-form').submit();" 
+                       class="nav-item text-white font-semibold hover:text-white nav-font flex items-center justify-center 
+                              py-2 px-6 text-base leading-tight">
+                        <span>Academic</span>
+                        <span class="ml-1">Year</span>
+                    </a>
+                </form>
+
+                <div class="dropdown">
+                    <a href="#" class="nav-item text-white font-semibold hover:text-white nav-font flex items-center justify-center 
+                          py-2 px-6 text-base leading-tight">Reports</a>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="event.preventDefault(); document.getElementById('crim-report-form').submit();">CRIM</a>
+                        <a href="#" onclick="event.preventDefault(); document.getElementById('is-report-form').submit();">IS</a>
+                        <a href="#" onclick="event.preventDefault(); document.getElementById('arts-report-form').submit();">ARTS</a>
+                        <a href="#" onclick="event.preventDefault(); document.getElementById('educ-report-form').submit();">EDUC</a>
+                    </div>
+                </div>
+
+                <!-- Hidden forms for reports -->
+                <form th:action="@{/studentsViolation/getReports}" method="get" id="crim-report-form" style="display: none;">
+                    <input type="hidden" name="department" value="CRIM">
+                </form>
+                <form th:action="@{/studentsViolation/getReports}" method="get" id="is-report-form" style="display: none;">
+                    <input type="hidden" name="department" value="IS">
+                </form>
+                <form th:action="@{/studentsViolation/getReports}" method="get" id="arts-report-form" style="display: none;">
+                    <input type="hidden" name="department" value="ARTS">
+                </form>
+                <form th:action="@{/studentsViolation/getReports}" method="get" id="educ-report-form" style="display: none;">
+                    <input type="hidden" name="department" value="EDUC">
+                </form>
+
+                <!-- Adjusting 'User Account' alignment -->
+                <form th:action="@{/studentsViolation/userAccount}" method="get" id="userAcc-form">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('userAcc-form').submit();" 
+                       class="nav-item text-gray-300 hover:text-white nav-font flex items-center justify-center 
+                              py-2 px-6 text-base leading-tight">
+                        User Account
+                    </a>
+                </form>
+
+                <form th:action="@{/studentsViolation/logout}" method="post" id="logout-form">
+                    <button type="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+                            class="logout-btn">
+                        <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Profile section (User name and profile picture very close) -->
+            <div class="flex items-center justify-end ml-32 mr-8">
+                <div class="flex items-center text-white">
+                    <div class="mr-1"> <!-- Reduced spacing -->
+                        <div class="profile-name text-xl font-medium" th:text="${session.currentUser.name}"></div>
+                        <div class="profile-usertype text-md" th:text="${session.currentUser.userType}"></div>
+                    </div>
+                    <img class="profile-pic w-12 h-12 rounded-full border-2 border-white" 
+                         th:src="@{${'/studentsViolation/display?id=' + session.currentUser.id}}" alt="Profile Picture">  
                 </div>
             </div>
-            <img class="logo-image" src="/bcc.jpg" alt="Your Company">
-            <div class="text-logo text-xl font-semibold ml-4">Students Violation</div>
-        </div>
-        <div class="nav-items">
-            <form th:action="@{/studentsViolation/dashboard}" method="get" id="dashboard-form">
-                <a href="#" onclick="event.preventDefault(); document.getElementById('dashboard-form').submit();" class="nav-item active-nav nav-font bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold hover:from-blue-650 hover:to-blue-850 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 rounded-lg shadow-md py-3 px-6">Dashboard</a>
-            </form>
-            <form th:if="${session.userType == 'admin'}" th:action="@{/studentsViolation/users}" method="get" id="users-form">
-                <input type="hidden" name="status" value="enabled">
-                <a href="#" onclick="event.preventDefault(); document.getElementById('users-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Users</a>
-            </form>
-            <form th:unless="${session.userType == 'admin'}" th:action="@{/studentsViolation/studentEntry}" method="get" id="studentEntry-form">
-                <a href="#" onclick="event.preventDefault(); document.getElementById('studentEntry-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Student Entry</a>
-            </form>
-            <form th:action="@{/studentsViolation/records}" method="get" id="records-form">
-                <a href="#" onclick="event.preventDefault(); document.getElementById('records-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Records</a>
-            </form>
-            <form th:action="@{/studentsViolation/academicYear}" method="get" id="acadYear-form">
-                <a href="#" onclick="event.preventDefault(); document.getElementById('acadYear-form').submit();" class="nav-item text-white font-semibold hover:text-white nav-font">Academic Year</a>
-            </form>
-            <div class="dropdown">
-                <a href="#" class="nav-item text-white font-semibold hover:text-white nav-font">Reports</a>
-                <div class="dropdown-content">
-                    <a href="#" onclick="event.preventDefault(); document.getElementById('crim-report-form').submit();">CRIM</a>
-                    <a href="#" onclick="event.preventDefault(); document.getElementById('is-report-form').submit();">IS</a>
-                    <a href="#" onclick="event.preventDefault(); document.getElementById('arts-report-form').submit();">ARTS</a>
-                    <a href="#" onclick="event.preventDefault(); document.getElementById('educ-report-form').submit();">EDUC</a>
-                </div>
-            </div>
-            <form th:action="@{/studentsViolation/getReports}" method="get" id="crim-report-form" style="display: none;">
-                <input type="hidden" name="department" value="CRIM">
-            </form>
-            <form th:action="@{/studentsViolation/getReports}" method="get" id="is-report-form" style="display: none;">
-                <input type="hidden" name="department" value="IS">
-            </form>
-            <form th:action="@{/studentsViolation/getReports}" method="get" id="arts-report-form" style="display: none;">
-                <input type="hidden" name="department" value="ARTS">
-            </form>
-            <form th:action="@{/studentsViolation/getReports}" method="get" id="educ-report-form" style="display: none;">
-                <input type="hidden" name="department" value="EDUC">
-            </form>
-            <form th:action="@{/studentsViolation/userAccount}" method="get" id="userAcc-form">
-                <a href="#" onclick="event.preventDefault(); document.getElementById('userAcc-form').submit();" class="nav-item text-gray-300 hover:text-white nav-font">User Account</a>
-            </form>
-             <form th:action="@{/studentsViolation/logout}" method="post" id="logout-form">
-                <button type="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="logout-btn">
-                    <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>
-                </button>
-            </form>
         </div>
     </div>
 </nav>
+
 
         </div>
         <div th:if="${session.currentUser.userType == 'departmenthead' || session.currentUser.userType == 'disciplinaryofficer' || session.currentUser.userType == 'guidancecounselor'}">

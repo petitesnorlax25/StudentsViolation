@@ -36,6 +36,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studentsviolation.main.DateTime;
 import com.studentsviolation.main.ViolationRecordDTO;
+import com.studentsviolation.main.dto.CategoryAOffenseDTO;
+import com.studentsviolation.main.dto.CategoryBOffenseDTO;
+import com.studentsviolation.main.dto.CategoryCOffenseDTO;
+import com.studentsviolation.main.dto.OffenseDTO;
 import com.studentsviolation.main.entity.AcademicYear;
 import com.studentsviolation.main.entity.CrimViolations;
 import com.studentsviolation.main.entity.EducViolations;
@@ -688,6 +692,16 @@ public class AdminController {
 			return "redirect:/studentsViolation?unauthorizedAccess=You are not signed in, Please Log-in!";
 		}
 		allViolation.sort(Comparator.comparing(ViolationRecords::getViolationDate).reversed());
+		List<CategoryAOffenseDTO> categoryAOffenses = CategoryAOffenseDTO.getCategoryAOffenses();
+        List<CategoryBOffenseDTO> categoryBOffenses = CategoryBOffenseDTO.getCategoryBOffenses();
+        List<CategoryCOffenseDTO> categoryCOffenses = CategoryCOffenseDTO.getCategoryCOffenses();
+
+        // Merge them into one list of OffenseDTO
+        List<OffenseDTO> allOffenses = new ArrayList<>();
+        allOffenses.addAll(categoryAOffenses);
+        allOffenses.addAll(categoryBOffenses);
+        allOffenses.addAll(categoryCOffenses);
+        model.addAttribute("offense", allOffenses);
 		model.addAttribute("violations", allViolation);
 		return "users/studentEntry";
 	}
@@ -1137,6 +1151,20 @@ public class AdminController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 	                             .body(Collections.singletonMap("error", "An error occurred while processing your request."));
 	    }
+	}
+	@GetMapping("/allOffenses")
+	public String offense(Model model) {
+		List<CategoryAOffenseDTO> categoryAOffenses = CategoryAOffenseDTO.getCategoryAOffenses();
+        List<CategoryBOffenseDTO> categoryBOffenses = CategoryBOffenseDTO.getCategoryBOffenses();
+        List<CategoryCOffenseDTO> categoryCOffenses = CategoryCOffenseDTO.getCategoryCOffenses();
+
+        // Merge them into one list of OffenseDTO
+        List<OffenseDTO> allOffenses = new ArrayList<>();
+        allOffenses.addAll(categoryAOffenses);
+        allOffenses.addAll(categoryBOffenses);
+        allOffenses.addAll(categoryCOffenses);
+        model.addAttribute("offense", allOffenses);
+        return "users/offense";
 	}
 
 
