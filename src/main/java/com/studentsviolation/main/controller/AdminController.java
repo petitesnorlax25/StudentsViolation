@@ -127,7 +127,7 @@ public class AdminController {
 		return "users/signin";
 		
 	}
-	@GetMapping("/studentsLogin")
+	@GetMapping("/getStudentsLogin")
 	public String showStudentsLogin(Model model, HttpSession session) {
 		return "students/studentsLogin";
 		
@@ -211,7 +211,7 @@ public class AdminController {
 	    Students students = new Students();
 	    StudentsData studentData = apiAuthenticationService.authenticate(url);
 	    if(studentData==null){
-	    	return "redirect:/studentsViolation/studentsLogin?errorMessage=invalid username or password";
+	    	return "redirect:/studentsViolation/getStudentsLogin?errorMessage=invalid username or password";
 	    }
 	    String firstname = studentData.getFirst_name();	 
         String middlename = studentData.getMiddle_name();	
@@ -304,7 +304,7 @@ public class AdminController {
 	    	getStudent = (getStudent != null) ? getStudent : new Students(); 
 	    	if (!getStudent.getUsername().equals(username)||!getStudent.getPassword().equals(password)) {
 	    		
-	    		return "redirect:/studentsViolation/studentsLogin?errorMessage=invalid username or password";
+	    		return "redirect:/studentsViolation/getStudentsLogin?errorMessage=invalid username or password";
 	    	}
 	    }
 	    return "redirect:/studentsViolation/homepage";
